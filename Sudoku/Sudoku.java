@@ -60,6 +60,12 @@ public class Sudoku extends JFrame {
         menuBar.add(menuFile);
         setJMenuBar(menuBar);
 
+        btnNewGame.setOpaque(true);
+        btnNewGame.setBorderPainted(false);
+        btnNewGame.setBackground(new Color(51, 153, 255));
+        btnNewGame.setBackground(Color.PINK); // Mengatur warna tombol menjadi pink
+
+
         btnNewGame.addActionListener(e -> showDifficultyDialog());
         newGame.addActionListener(e -> showDifficultyDialog());
         resetGame.addActionListener(e -> board.resetGame());
