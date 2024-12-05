@@ -1,44 +1,36 @@
 package Sudoku;
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * The main Sudoku program
  */
 public class Sudoku extends JFrame {
     private static final long serialVersionUID = 1L;// to prevent serial warning
-
-    // private variables
+    private int timeElapsed = 0;
+    private int score = 0;
+    private Timer timer;
+    private JLabel timerLabel;
+    private boolean isPaused = false;
     GameBoardPanel board = new GameBoardPanel();
     JButton btnNewGame = new JButton("New Game");
     JTextField statusBar = new JTextField("Welcome to Sudoku!");
     private JButton[][] kotakSudoku = new JButton[9][9];
+
+
     private boolean isEmptyCell(int row, int col) {
         return kotakSudoku[row][col] != null && kotakSudoku[row][col].getText().isEmpty();
     }
 
-
+    private JLabel scoreLabel;
 
     // Constructor
     public Sudoku() {
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
-
-        btnNewGame.setOpaque(true);
-        btnNewGame.setBorderPainted(false);
-        btnNewGame.setBackground(new Color(51, 153, 255));
-        btnNewGame.setBackground(Color.PINK); // Mengatur warna tombol menjadi pink
-
-        // Menentukan warna tertentu untuk kotak yang kosong
-        for (int row = 0; row < 9; row++) {
-                for (int col = 0; col < 9; col++) {
-                    if (isEmptyCell(row, col)) {
-                        kotakSudoku[row][col].setBackground(Color.PINK);
-                    }
-                }
-        }
 
         cp.add(board, BorderLayout.CENTER);
         // Add a button to the south to re-start the game via board.newGame()
@@ -80,27 +72,41 @@ public class Sudoku extends JFrame {
                 JOptionPane.showMessageDialog(this, "No hints available!", "Hint", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+
+        scoreLabel = new JLabel("Score: 0");
+        sidePanel.add(scoreLabel); // Tambahkan ke panel
+
         pauseButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Pause feature is not yet implemented!", "Pause", JOptionPane.INFORMATION_MESSAGE);
+            if (!isPaused) {
+                timer.stop();
+                pauseButton.setText("Resume");
+                isPaused = true;
+            } else {
+                timer.start();
+                pauseButton.setText("Pause");
+                isPaused = false;
+            }
         });
+
+        //buat timer ya ges ya
+        timerLabel = new JLabel("Time: 0", JLabel.CENTER);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(timerLabel, BorderLayout.NORTH);
+        timer = new Timer(1000, new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                if (!isPaused) {
+                    timeElapsed++;
+                    timerLabel.setText("Time: " + timeElapsed);
+                }
+            }
+        });
+        timer.start();
 
         pack();     // Pack the UI components, instead of using setSize()
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // to handle window-closing
         setTitle("Sudoku");
         setVisible(true);
         showWelcomeDialog();
-
-        btnNewGame.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                btnNewGame.setBackground(new Color(30, 144, 255)); // Highlight
-            }
-
-            @Override
-            public void mouseExited(MouseEvent e) {
-                btnNewGame.setBackground(new Color(51, 153, 255)); // Warna default
-            }
-        });
     }
 
     private void showWelcomeDialog() {
@@ -132,9 +138,28 @@ public class Sudoku extends JFrame {
                 options[1]
         );
 
-        if(choice >= 0){
+        if (choice >= 0) {
             String difficulty = options[choice];
             board.newGame(difficulty.toLowerCase());
+        }
+    }
+
+    private void pauseGame() {
+        if (timer != null) {
+            timer.stop(); // Hentikan timer
+        }
+    }
+
+    private void resumeGame() {
+        if (timer != null) {
+            timer.start(); // Lanjutkan timer
+        }
+    }
+
+    public void validateInput(int row, int col, int value) {
+        if (isPaused) {
+            JOptionPane.showMessageDialog(this, "Game is paused!", "Pause", JOptionPane.WARNING_MESSAGE);
+            return;
         }
     }
 }
