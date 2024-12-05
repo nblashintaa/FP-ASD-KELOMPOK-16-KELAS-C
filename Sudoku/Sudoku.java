@@ -1,6 +1,9 @@
 package Sudoku;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.Timer;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -9,17 +12,22 @@ import java.awt.event.MouseEvent;
  */
 public class Sudoku extends JFrame {
     private static final long serialVersionUID = 1L;// to prevent serial warning
-
-    // private variables
+    private int timeElapsed = 0;
+    private int score = 0;
+    private Timer timer;
+    private JLabel timerLabel;
+    private boolean isPaused = false;
     GameBoardPanel board = new GameBoardPanel();
     JButton btnNewGame = new JButton("New Game");
     JTextField statusBar = new JTextField("Welcome to Sudoku!");
     private JButton[][] kotakSudoku = new JButton[9][9];
+
+
     private boolean isEmptyCell(int row, int col) {
         return kotakSudoku[row][col] != null && kotakSudoku[row][col].getText().isEmpty();
     }
 
-
+    private JLabel scoreLabel;
 
     // Constructor
     public Sudoku() {
@@ -33,11 +41,11 @@ public class Sudoku extends JFrame {
 
         // Menentukan warna tertentu untuk kotak yang kosong
         for (int row = 0; row < 9; row++) {
-                for (int col = 0; col < 9; col++) {
-                    if (isEmptyCell(row, col)) {
-                        kotakSudoku[row][col].setBackground(Color.PINK);
-                    }
+            for (int col = 0; col < 9; col++) {
+                if (isEmptyCell(row, col)) {
+                    kotakSudoku[row][col].setBackground(Color.PINK);
                 }
+            }
         }
 
         cp.add(board, BorderLayout.CENTER);
@@ -80,8 +88,17 @@ public class Sudoku extends JFrame {
                 JOptionPane.showMessageDialog(this, "No hints available!", "Hint", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+
         pauseButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Pause feature is not yet implemented!", "Pause", JOptionPane.INFORMATION_MESSAGE);
+            if (!isPaused) {
+                timer.stop();
+                pauseButton.setText("Resume");
+                isPaused = true;
+            } else {
+                timer.start();
+                pauseButton.setText("Pause");
+                isPaused = false;
+            }
         });
 
         pack();     // Pack the UI components, instead of using setSize()
@@ -101,6 +118,21 @@ public class Sudoku extends JFrame {
                 btnNewGame.setBackground(new Color(51, 153, 255)); // Warna default
             }
         });
+
+        //initialising label timer ya ges ya
+        timerLabel = new JLabel("Time: 0", JLabel.CENTER);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        add(timerLabel, BorderLayout.NORTH);
+        timer = new Timer(1000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (!isPaused) {
+                    timeElapsed++;
+                    timerLabel.setText("Time: " + timeElapsed);
+                }
+            }
+        });
+        timer.start();
     }
 
     private void showWelcomeDialog() {
@@ -137,4 +169,43 @@ public class Sudoku extends JFrame {
             board.newGame(difficulty.toLowerCase());
         }
     }
+
+    private void pauseGame() {
+        if (timer != null) {
+            timer.stop(); // Hentikan timer
+        }
+    }
+
+    private void resumeGame() {
+        if (timer != null) {
+            timer.start(); // Lanjutkan timer
+        }
+    }
+
+    public void validateInput(int row, int col, int value) {
+        if (isPaused) {
+            JOptionPane.showMessageDialog(this, "Game is paused!", "Pause", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        if (isValid(row, col, value)) {
+            score += 10;  // Tambahkan skor jika input valid
+        } else {
+            score -= 5;   // Kurangi skor jika input tidak valid
+        }
+        updateScoreDisplay();
+    }
+
+    private void updateScoreDisplay() {
+        scoreLabel.setText("Score: " + score);
+    }
+
+    // Metode untuk memvalidasi input secara umum (pastikan ini sudah didefinisikan di kelas Anda)
+    public boolean isValid(int row, int col, int value) {
+        // Implementasi metode ini untuk memvalidasi input
+        return true; // contoh logika
+    }
+
 }
+
+
