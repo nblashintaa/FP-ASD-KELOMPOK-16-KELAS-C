@@ -132,7 +132,7 @@ public class Sudoku extends JFrame {
                 options[1]
         );
 
-        if (choice >= 0) {
+        if(choice >= 0){
             String difficulty = options[choice];
             board.newGame(difficulty.toLowerCase());
         }
