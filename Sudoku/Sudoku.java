@@ -1,21 +1,44 @@
 package Sudoku;
 import java.awt.*;
 import javax.swing.*;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 /**
  * The main Sudoku program
  */
 public class Sudoku extends JFrame {
-    private static final long serialVersionUID = 1L;  // to prevent serial warning
+    private static final long serialVersionUID = 1L;// to prevent serial warning
 
     // private variables
     GameBoardPanel board = new GameBoardPanel();
     JButton btnNewGame = new JButton("New Game");
     JTextField statusBar = new JTextField("Welcome to Sudoku!");
+    private JButton[][] kotakSudoku = new JButton[9][9];
+    private boolean isEmptyCell(int row, int col) {
+        return kotakSudoku[row][col] != null && kotakSudoku[row][col].getText().isEmpty();
+    }
+
+
 
     // Constructor
     public Sudoku() {
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
+
+        btnNewGame.setOpaque(true);
+        btnNewGame.setBorderPainted(false);
+        btnNewGame.setBackground(new Color(51, 153, 255));
+        btnNewGame.setBackground(Color.PINK); // Mengatur warna tombol menjadi pink
+
+        // Menentukan warna tertentu untuk kotak yang kosong
+        for (int row = 0; row < 9; row++) {
+                for (int col = 0; col < 9; col++) {
+                    if (isEmptyCell(row, col)) {
+                        kotakSudoku[row][col].setBackground(Color.PINK);
+                    }
+                }
+        }
 
         cp.add(board, BorderLayout.CENTER);
         // Add a button to the south to re-start the game via board.newGame()
@@ -62,6 +85,18 @@ public class Sudoku extends JFrame {
         setTitle("Sudoku");
         setVisible(true);
         showWelcomeDialog();
+
+        btnNewGame.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseEntered(MouseEvent e) {
+                btnNewGame.setBackground(new Color(30, 144, 255)); // Highlight
+            }
+
+            @Override
+            public void mouseExited(MouseEvent e) {
+                btnNewGame.setBackground(new Color(51, 153, 255)); // Warna default
+            }
+        });
     }
     private void showWelcomeDialog() {
         JDialog welcomeDialog = new JDialog(this, "Welcome to Sudoku!", true);
