@@ -15,10 +15,13 @@ public class Sudoku extends JFrame {
     JButton btnNewGame = new JButton("New Game");
     JTextField statusBar = new JTextField("Welcome to Sudoku!");
     private JButton[][] kotakSudoku = new JButton[9][9];
+
+
     private boolean isEmptyCell(int row, int col) {
         return kotakSudoku[row][col] != null && kotakSudoku[row][col].getText().isEmpty();
     }
 
+    private JLabel scoreLabel;
 
 
     // Constructor
@@ -33,11 +36,11 @@ public class Sudoku extends JFrame {
 
         // Menentukan warna tertentu untuk kotak yang kosong
         for (int row = 0; row < 9; row++) {
-                for (int col = 0; col < 9; col++) {
-                    if (isEmptyCell(row, col)) {
-                        kotakSudoku[row][col].setBackground(Color.PINK);
-                    }
+            for (int col = 0; col < 9; col++) {
+                if (isEmptyCell(row, col)) {
+                    kotakSudoku[row][col].setBackground(Color.PINK);
                 }
+            }
         }
 
         cp.add(board, BorderLayout.CENTER);
@@ -135,6 +138,54 @@ public class Sudoku extends JFrame {
         if (choice >= 0) {
             String difficulty = options[choice];
             board.newGame(difficulty.toLowerCase());
+        }
+    }
+
+    // Metode untuk memvalidasi input pengguna dan mengembalikan nilai boolean
+    public boolean isValid(int row, int col, int value) {
+        // Periksa apakah nilai sudah ada di baris
+        for (int i = 0; i < 9; i++) {
+            if (kotakSudoku[row][i] != null && kotakSudoku[row][i].getText().equals(String.valueOf(value))) {
+                return false;  // Angka sudah ada di baris
+            }
+        }
+
+        // Periksa apakah nilai sudah ada di kolom
+        for (int i = 0; i < 9; i++) {
+            if (kotakSudoku[i][col] != null && kotakSudoku[i][col].getText().equals(String.valueOf(value))) {
+                return false;  // Angka sudah ada di kolom
+            }
+        }
+
+        // Periksa apakah nilai sudah ada di sub-grid 3x3
+        int startRow = row - row % 3;
+        int startCol = col - col % 3;
+        for (int i = startRow; i < startRow + 3; i++) {
+            for (int j = startCol; j < startCol + 3; j++) {
+                if (kotakSudoku[i][j] != null && kotakSudoku[i][j].getText().equals(String.valueOf(value))) {
+                    return false;  // Angka sudah ada di sub-grid 3x3
+                }
+            }
+        }
+
+        return true;  // Input valid jika tidak ada duplikasi
+    }
+
+    // Metode untuk memvalidasi input dan memperbarui skor
+    private int score =0;
+    public void validateInput(int row, int col, int value) {
+        if (isValid(row, col, value)) {
+            score += 10;  // Tambahkan skor jika input valid
+        } else {
+            score -= 5;  // Kurangi skor jika input tidak valid
+        }
+        updateScoreDisplay();
+    }
+
+    // Metode untuk memperbarui tampilan skor
+    private void updateScoreDisplay() {
+        if (scoreLabel != null) {
+            scoreLabel.setText("Score: " + score);
         }
     }
 }
