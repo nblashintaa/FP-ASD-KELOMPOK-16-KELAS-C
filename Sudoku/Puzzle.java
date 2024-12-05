@@ -14,10 +14,18 @@ public class Puzzle {
         super();
     }
 
-    // Generate a new puzzle given the number of cells to be guessed, which can be used
-    //  to control the difficulty level.
-    // This method shall set (or update) the arrays numbers and isGiven
-    public void newPuzzle(int cellsToGuess) {
+    public void newPuzzle(String difficulty) {
+        int cellsToGuess = switch (difficulty.toLowerCase()) {
+            case "easy" -> 20;
+            case "medium" -> 40;
+            case "hard" -> 60;
+            default -> 40;
+        };
+
+        // Generate a new puzzle given the number of cells to be guessed, which can be used
+        //  to control the difficulty level.
+        // This method shall set (or update) the arrays numbers and isGiven
+        // public void newPuzzle(int cellsToGuess) {
         // I hardcode a puzzle here for illustration and testing.
         int[][] hardcodedNumbers =
                 {{5, 3, 4, 6, 7, 8, 9, 1, 2},
@@ -56,7 +64,17 @@ public class Puzzle {
                 isGiven[row][col] = hardcodedIsGiven[row][col];
             }
         }
-    }
 
-    //(For advanced students) use singleton design pattern for this class
+        int removed = 0;
+        while (removed < cellsToGuess) {
+            int row = (int) (Math.random() * SudokuConstants.GRID_SIZE);
+            int col = (int) (Math.random() * SudokuConstants.GRID_SIZE);
+            if (isGiven[row][col]) {
+                isGiven[row][col] = false;
+                removed++;
+            }
+        }
+    }
 }
+
+//(For advanced students) use singleton design pattern for this class

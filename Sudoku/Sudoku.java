@@ -21,7 +21,7 @@ public class Sudoku extends JFrame {
         // Add a button to the south to re-start the game via board.newGame()
         cp.add(btnNewGame, BorderLayout.SOUTH);
         // Initialize the game board to start the game
-        board.newGame();
+        board.newGame("easy");
 
         //panel samping
         JPanel sidePanel = new JPanel();
@@ -45,8 +45,8 @@ public class Sudoku extends JFrame {
         menuBar.add(menuFile);
         setJMenuBar(menuBar);
 
-        btnNewGame.addActionListener(e -> board.newGame());
-        newGame.addActionListener(e -> board.newGame());
+        btnNewGame.addActionListener(e -> showDifficultyDialog());
+        newGame.addActionListener(e -> showDifficultyDialog());
         resetGame.addActionListener(e -> board.resetGame());
         exit.addActionListener(e -> System.exit(0));
         hintButton.addActionListener(e -> {
@@ -55,6 +55,7 @@ public class Sudoku extends JFrame {
         pauseButton.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Pause feature is not yet implemented!", "Hint", JOptionPane.INFORMATION_MESSAGE);
         });
+
 
         pack();     // Pack the UI components, instead of using setSize()
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // to handle window-closing
@@ -77,5 +78,22 @@ public class Sudoku extends JFrame {
         welcomeDialog.setVisible(true);
         System.out.println("Showing Welcome Dialog...");
     }
+    private void showDifficultyDialog() {
+        String[] options = {"Easy", "Medium", "Hard"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Select Difficulty Level:",
+                "New Game Difficulty",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                options,
+                options[1]
+        );
 
+        if (choice >= 0) {
+            String difficulty = options[choice];
+            board.newGame(difficulty.toLowerCase());
+        }
+    }
 }
