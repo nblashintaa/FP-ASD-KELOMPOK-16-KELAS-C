@@ -71,18 +71,24 @@ public class GameBoardPanel extends JPanel {
         }
     }
 
-    public void giveHint() {
-        // Contoh sederhana: cari cell yang kosong, dan isi dengan angka yang benar
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
-                if (cells[row][col].status == CellStatus.TO_GUESS) {
-                    cells[row][col].setText(String.valueOf(cells[row][col].number));
-                    cells[row][col].status = CellStatus.CORRECT_GUESS;
-                    cells[row][col].paint();
-                    return; // Berikan hanya satu hint
-                }
-            }
+    public String getHint() {
+        // Placeholder logic for hint generation
+        // Suggest a number with a clue about its relative size
+        int targetRow = 2;
+        int targetCol = 3;
+        int suggestedNumber = 5;
+
+        // Provide a hint whether the number is less than or greater than the actual value
+        boolean isGreater = Math.random() > 0.5; // Randomly decide the hint
+        String hintMessage = "Try placing " + suggestedNumber + " at row " + targetRow + ", column " + targetCol + ".";
+
+        if (isGreater) {
+            hintMessage += " The correct number is greater than " + suggestedNumber + ".";
+        } else {
+            hintMessage += " The correct number is less than " + suggestedNumber + ".";
         }
+
+        return hintMessage;
     }
 
     private boolean isPaused = false;

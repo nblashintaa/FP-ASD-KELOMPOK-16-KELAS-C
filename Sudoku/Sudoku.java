@@ -73,12 +73,16 @@ public class Sudoku extends JFrame {
         resetGame.addActionListener(e -> board.resetGame());
         exit.addActionListener(e -> System.exit(0));
         hintButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Hint feature is not yet implemented!", "Hint", JOptionPane.INFORMATION_MESSAGE);
+            String hint = board.getHint();
+            if (hint != null) {
+                JOptionPane.showMessageDialog(this, hint, "Hint", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No hints available!", "Hint", JOptionPane.INFORMATION_MESSAGE);
+            }
         });
         pauseButton.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Pause feature is not yet implemented!", "Hint", JOptionPane.INFORMATION_MESSAGE);
+            JOptionPane.showMessageDialog(this, "Pause feature is not yet implemented!", "Pause", JOptionPane.INFORMATION_MESSAGE);
         });
-
 
         pack();     // Pack the UI components, instead of using setSize()
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // to handle window-closing
@@ -98,6 +102,7 @@ public class Sudoku extends JFrame {
             }
         });
     }
+
     private void showWelcomeDialog() {
         JDialog welcomeDialog = new JDialog(this, "Welcome to Sudoku!", true);
         welcomeDialog.setLayout(new BorderLayout());
@@ -113,6 +118,7 @@ public class Sudoku extends JFrame {
         welcomeDialog.setVisible(true);
         System.out.println("Showing Welcome Dialog...");
     }
+
     private void showDifficultyDialog() {
         String[] options = {"Easy", "Medium", "Hard"};
         int choice = JOptionPane.showOptionDialog(
