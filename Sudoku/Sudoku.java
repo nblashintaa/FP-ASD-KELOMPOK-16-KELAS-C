@@ -1,4 +1,5 @@
 package Sudoku;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.Timer;
@@ -9,7 +10,7 @@ import java.awt.event.ActionListener;
  * The main Sudoku program
  */
 public class Sudoku extends JFrame {
-    private static final long serialVersionUID = 1L;// to prevent serial warning
+    private static final long serialVersionUID = 1L;
     private int timeElapsed = 0;
     private int score = 0;
     private Timer timer;
@@ -20,11 +21,6 @@ public class Sudoku extends JFrame {
     JTextField statusBar = new JTextField("Welcome to Sudoku!");
     private JButton[][] kotakSudoku = new JButton[9][9];
 
-
-    private boolean isEmptyCell(int row, int col) {
-        return kotakSudoku[row][col] != null && kotakSudoku[row][col].getText().isEmpty();
-    }
-
     private JLabel scoreLabel;
 
     // Constructor
@@ -33,38 +29,32 @@ public class Sudoku extends JFrame {
         cp.setLayout(new BorderLayout());
 
         cp.add(board, BorderLayout.CENTER);
-        // Add a button to the south to re-start the game via board.newGame()
         cp.add(btnNewGame, BorderLayout.SOUTH);
-        // Initialize the game board to start the game
         board.newGame("easy");
 
-        //panel samping
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
         JButton hintButton = new JButton("Hint");
         JButton pauseButton = new JButton("Pause");
         sidePanel.add(hintButton);
         sidePanel.add(pauseButton);
+
+        // Create score label and add to the side panel
+        scoreLabel = new JLabel("Score: 0");
+        sidePanel.add(scoreLabel);
+
         cp.add(sidePanel, BorderLayout.EAST);
-        //menu bar
+
         JMenuBar menuBar = new JMenuBar();
         JMenu menuFile = new JMenu("File");
         JMenuItem newGame = new JMenuItem("New Game");
         JMenuItem resetGame = new JMenuItem("Reset Game");
-        JMenuItem pauseGame = new JMenuItem("Game Paused");
         JMenuItem exit = new JMenuItem("Exit");
         menuFile.add(newGame);
         menuFile.add(resetGame);
-        menuFile.add(pauseGame);
         menuFile.add(exit);
         menuBar.add(menuFile);
         setJMenuBar(menuBar);
-
-        btnNewGame.setOpaque(true);
-        btnNewGame.setBorderPainted(false);
-        btnNewGame.setBackground(new Color(51, 153, 255));
-        btnNewGame.setBackground(Color.PINK); // Mengatur warna tombol menjadi pink
-
 
         btnNewGame.addActionListener(e -> showDifficultyDialog());
         newGame.addActionListener(e -> showDifficultyDialog());
@@ -79,9 +69,6 @@ public class Sudoku extends JFrame {
             }
         });
 
-        scoreLabel = new JLabel("Score: 0");
-        sidePanel.add(scoreLabel); // Tambahkan ke panel
-
         pauseButton.addActionListener(e -> {
             if (!isPaused) {
                 timer.stop();
@@ -94,7 +81,6 @@ public class Sudoku extends JFrame {
             }
         });
 
-        //buat timer ya ges ya
         timerLabel = new JLabel("Time: 0", JLabel.CENTER);
         timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
         add(timerLabel, BorderLayout.NORTH);
@@ -108,8 +94,11 @@ public class Sudoku extends JFrame {
         });
         timer.start();
 
-        pack();     // Pack the UI components, instead of using setSize()
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);  // to handle window-closing
+        // Link scoreLabel to GameBoardPanel
+        board.setScoreLabel(scoreLabel);
+
+        pack();
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Sudoku");
         setVisible(true);
         showWelcomeDialog();
@@ -119,7 +108,7 @@ public class Sudoku extends JFrame {
         JDialog welcomeDialog = new JDialog(this, "Welcome to Sudoku!", true);
         welcomeDialog.setLayout(new BorderLayout());
         welcomeDialog.setSize(400, 200);
-        welcomeDialog.setLocationRelativeTo(null); // Center
+        welcomeDialog.setLocationRelativeTo(null);
 
         JLabel message = new JLabel("Welcome to Sudoku! Get ready to play!", JLabel.CENTER);
         JButton btnStart = new JButton("Start Game");
@@ -128,7 +117,6 @@ public class Sudoku extends JFrame {
         welcomeDialog.add(message, BorderLayout.CENTER);
         welcomeDialog.add(btnStart, BorderLayout.SOUTH);
         welcomeDialog.setVisible(true);
-        System.out.println("Showing Welcome Dialog...");
     }
 
     private void showDifficultyDialog() {
@@ -150,22 +138,25 @@ public class Sudoku extends JFrame {
         }
     }
 
-    private void pauseGame() {
-        if (timer != null) {
-            timer.stop(); // Hentikan timer
-        }
-    }
-
-    private void resumeGame() {
-        if (timer != null) {
-            timer.start(); // Lanjutkan timer
-        }
+    private void updateScore(int points) {
+        score += points;
+        if (score < 0) score = 0; // Prevent negative scores
+        scoreLabel.setText("Score: " + score);
     }
 
     public void validateInput(int row, int col, int value) {
         if (isPaused) {
             JOptionPane.showMessageDialog(this, "Game is paused!", "Pause", JOptionPane.WARNING_MESSAGE);
             return;
+        }
+
+        boolean isCorrect = board.checkAnswer(row, col, value);
+        if (isCorrect) {
+            updateScore(10); // Add 10 points for correct answer
+            JOptionPane.showMessageDialog(this, "Correct!", "Input Validation", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            updateScore(-5); // Deduct 5 points for incorrect answer
+            JOptionPane.showMessageDialog(this, "Incorrect!", "Input Validation", JOptionPane.ERROR_MESSAGE);
         }
     }
 }
