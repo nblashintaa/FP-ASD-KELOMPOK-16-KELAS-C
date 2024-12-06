@@ -6,9 +6,6 @@ import javax.swing.Timer;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-/**
- * The main Sudoku program
- */
 public class Sudoku extends JFrame {
     private static final long serialVersionUID = 1L;
     private int timeElapsed = 0;
@@ -16,15 +13,18 @@ public class Sudoku extends JFrame {
     private Timer timer;
     private JLabel timerLabel;
     private boolean isPaused = false;
+    private boolean isDarkMode = false; // Track Dark Mode status
     GameBoardPanel board = new GameBoardPanel();
     JButton btnNewGame = new JButton("New Game");
     JTextField statusBar = new JTextField("Welcome to Sudoku!");
     private JButton[][] kotakSudoku = new JButton[9][9];
 
     private JLabel scoreLabel;
+    private JButton darkModeButton; // Button for toggling Dark Mode
 
-    // Constructor
     public Sudoku() {
+        SoundEffect backSound = new SoundEffect("sudoku/bensound-clearday.wav");
+        backSound.play(); // Memulai backsound
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
@@ -38,10 +38,32 @@ public class Sudoku extends JFrame {
         JButton pauseButton = new JButton("Pause");
         sidePanel.add(hintButton);
         sidePanel.add(pauseButton);
+        JMenu optionMenu = new JMenu("Option");
+
+        JMenuItem toggleSoundItem = new JMenuItem("Toggle Sound");
+        toggleSoundItem.addActionListener(new ActionListener() {
+            private boolean isPlaying = true;
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (isPlaying) {
+                    backSound.stop(); // Hentikan audio
+                    isPlaying = false;
+                } else {
+                    backSound.play(); // Putar ulang audio
+                    isPlaying = true;
+                }
+            }
+        });
+        // Add Dark Mode button
+        darkModeButton = new JButton("Dark Mode");
+        darkModeButton.addActionListener(e -> toggleDarkMode());
+        sidePanel.add(darkModeButton);
 
         // Create score label and add to the side panel
         scoreLabel = new JLabel("Score: 0");
         sidePanel.add(scoreLabel);
+
 
         cp.add(sidePanel, BorderLayout.EAST);
 
@@ -102,6 +124,28 @@ public class Sudoku extends JFrame {
         setTitle("Sudoku");
         setVisible(true);
         showWelcomeDialog();
+    }
+
+    private void toggleDarkMode() {
+        isDarkMode = !isDarkMode;
+        updateDarkMode();
+    }
+
+    private void updateDarkMode() {
+        if (isDarkMode) {
+            getContentPane().setBackground(Color.BLACK);
+            timerLabel.setForeground(Color.WHITE);
+            scoreLabel.setForeground(Color.WHITE);
+            darkModeButton.setText("Light Mode");
+            board.setDarkMode(true);
+        } else {
+            getContentPane().setBackground(Color.WHITE);
+            timerLabel.setForeground(Color.BLACK);
+            scoreLabel.setForeground(Color.BLACK);
+            darkModeButton.setText("Dark Mode");
+            board.setDarkMode(false);
+        }
+        repaint();
     }
 
     private void showWelcomeDialog() {

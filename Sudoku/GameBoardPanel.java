@@ -8,6 +8,7 @@ public class GameBoardPanel extends JPanel {
     private static final long serialVersionUID = 1L; // To prevent serial warning
     private int score = 0;
     private JLabel scoreLabel;
+    private boolean isDark = false;
 
     // Define named constants for UI sizes
     public static final int CELL_SIZE = 60; // Cell width/height in pixels
@@ -22,6 +23,8 @@ public class GameBoardPanel extends JPanel {
     public void setPaused(boolean isPaused) {
         this.isPaused = isPaused;
     }
+
+
 
     @Override
     public void processMouseEvent(MouseEvent e) {
@@ -112,13 +115,35 @@ public class GameBoardPanel extends JPanel {
 
         return hintMessage;
     }
+    //dark mode tapi di timernya aja sih
+    public void setDarkMode(boolean isDark) {
+        this.isDark = isDark;
+        if (isDark) {
+            setBackground(Color.BLACK);
+            // Tambahkan logika tambahan untuk mengubah warna elemen lain di board, jika diperlukan
+        } else {
+            setBackground(Color.WHITE);
+            // Tambahkan logika tambahan untuk mengembalikan warna elemen ke mode terang
+        }
+        repaint(); // Repaint untuk memperbarui tampilan
+    }
 
     public void pauseGame() {
         isPaused = !isPaused;
+
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
                 if (cells[row][col].isEditable()) {
                     cells[row][col].setEnabled(!isPaused);
+                    cells[row][col].setFocusable(!isPaused); // Menonaktifkan input keyboard
+
+                    if (isPaused) {
+                        for (ActionListener al : cells[row][col].getActionListeners()) {
+                            cells[row][col].removeActionListener(al);
+                        }
+                    } else {
+                        cells[row][col].addActionListener(new CellInputListener());
+                    }
                 }
             }
         }
