@@ -19,6 +19,17 @@ public class GameBoardPanel extends JPanel {
     private Puzzle puzzle = new Puzzle();
     private boolean isPaused = false;
 
+    public void setPaused(boolean isPaused){
+        this.isPaused = isPaused;
+    }
+
+    @Override
+    public void processMouseEvent(MouseEvent e) {
+        if (!isPaused) {
+            super.processMouseEvent(e); //  interaksi kalau nggak paused
+        }
+    }
+
     /** Constructor */
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());

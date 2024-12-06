@@ -41,22 +41,11 @@ public class Sudoku extends JFrame {
         //panel samping
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
-
         JButton hintButton = new JButton("Hint");
-        sidePanel.add(hintButton);
-
         JButton pauseButton = new JButton("Pause");
+        sidePanel.add(hintButton);
         sidePanel.add(pauseButton);
-
-        scoreLabel = new JLabel("Score: 0");
-        scoreLabel.setFont(new Font("Arial", Font.BOLD, 12));
-        scoreLabel.setAlignmentX(Component.CENTER_ALIGNMENT); // Supaya rata tengah
-        sidePanel.add(Box.createRigidArea(new Dimension(0, 10))); // Tambahkan spasi
-        sidePanel.add(scoreLabel);
-        board.setScoreLabel(scoreLabel);
-
         cp.add(sidePanel, BorderLayout.EAST);
-
         //menu bar
         JMenuBar menuBar = new JMenuBar();
         JMenu menuFile = new JMenu("File");
@@ -71,6 +60,12 @@ public class Sudoku extends JFrame {
         menuBar.add(menuFile);
         setJMenuBar(menuBar);
 
+        btnNewGame.setOpaque(true);
+        btnNewGame.setBorderPainted(false);
+        btnNewGame.setBackground(new Color(51, 153, 255));
+        btnNewGame.setBackground(Color.PINK); // Mengatur warna tombol menjadi pink
+
+
         btnNewGame.addActionListener(e -> showDifficultyDialog());
         newGame.addActionListener(e -> showDifficultyDialog());
         resetGame.addActionListener(e -> board.resetGame());
@@ -83,6 +78,9 @@ public class Sudoku extends JFrame {
                 JOptionPane.showMessageDialog(this, "No hints available!", "Hint", JOptionPane.INFORMATION_MESSAGE);
             }
         });
+
+        scoreLabel = new JLabel("Score: 0");
+        sidePanel.add(scoreLabel); // Tambahkan ke panel
 
         pauseButton.addActionListener(e -> {
             if (!isPaused) {
@@ -98,7 +96,7 @@ public class Sudoku extends JFrame {
 
         //buat timer ya ges ya
         timerLabel = new JLabel("Time: 0", JLabel.CENTER);
-        timerLabel.setFont(new Font("Arial", Font.BOLD, 16));
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
         add(timerLabel, BorderLayout.NORTH);
         timer = new Timer(1000, new ActionListener() {
             public void actionPerformed(ActionEvent e) {
