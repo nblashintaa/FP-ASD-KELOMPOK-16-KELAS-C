@@ -5,12 +5,12 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class GameBoardPanel extends JPanel {
-    private static final long serialVersionUID = 1L;  // To prevent serial warning
+    private static final long serialVersionUID = 1L; // To prevent serial warning
     private int score = 0;
     private JLabel scoreLabel;
 
     // Define named constants for UI sizes
-    public static final int CELL_SIZE = 60;   // Cell width/height in pixels
+    public static final int CELL_SIZE = 60; // Cell width/height in pixels
     public static final int BOARD_WIDTH = CELL_SIZE * SudokuConstants.GRID_SIZE;
     public static final int BOARD_HEIGHT = CELL_SIZE * SudokuConstants.GRID_SIZE;
 
@@ -19,18 +19,20 @@ public class GameBoardPanel extends JPanel {
     private Puzzle puzzle = new Puzzle();
     private boolean isPaused = false;
 
-    public void setPaused(boolean isPaused){
+    public void setPaused(boolean isPaused) {
         this.isPaused = isPaused;
     }
 
     @Override
     public void processMouseEvent(MouseEvent e) {
         if (!isPaused) {
-            super.processMouseEvent(e); //  interaksi kalau nggak paused
+            super.processMouseEvent(e); // Interaction when not paused
         }
     }
 
-    /** Constructor */
+    /**
+     * Constructor
+     */
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
 
@@ -133,6 +135,40 @@ public class GameBoardPanel extends JPanel {
         return true;
     }
 
+    public boolean isValidMove(int row, int col, int number) {
+        // Periksa apakah angka tersebut sudah ada di baris yang sama
+        for (int i = 0; i < SudokuConstants.GRID_SIZE; i++) {
+            if (cells[row][i].number == number) {
+                return false;
+            }
+        }
+
+        // Periksa apakah angka tersebut sudah ada di kolom yang sama
+        for (int i = 0; i < SudokuConstants.GRID_SIZE; i++) {
+            if (cells[i][col].number == number) {
+                return false;
+            }
+        }
+
+        // Periksa apakah angka tersebut sudah ada di kotak 3x3
+        int boxRowStart = (row / 3) * 3;
+        int boxColStart = (col / 3) * 3;
+        for (int i = boxRowStart; i < boxRowStart + 3; i++) {
+            for (int j = boxColStart; j < boxColStart + 3; j++) {
+                if (cells[i][j].number == number) {
+                    return false;
+                }
+            }
+        }
+
+        // Jika lolos semua pengecekan, langkah valid
+        return true;
+    }
+
+    public boolean checkAnswer(int row, int col, int numberIn) {
+        return cells[row][col].number == numberIn; // Pastikan sel sesuai dengan angka yang benar
+    }
+
     private class CellInputListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
@@ -141,21 +177,24 @@ public class GameBoardPanel extends JPanel {
                 int numberIn = Integer.parseInt(sourceCell.getText());
                 System.out.println("You entered " + numberIn);
 
-                if (numberIn == sourceCell.number) {
+                // Cek apakah jawaban benar atau salah
+                if (checkAnswer(sourceCell.row, sourceCell.col, numberIn)) {
                     sourceCell.status = CellStatus.CORRECT_GUESS;
-                    updateScore(10);
+                    updateScore(10); // Tambahkan 10 poin jika jawaban benar
                 } else {
                     sourceCell.status = CellStatus.WRONG_GUESS;
-                    updateScore(-5);
+                    updateScore(-5); // Kurangi 5 poin jika jawaban salah
                 }
-                sourceCell.paint();
 
+                sourceCell.paint(); // Perbarui tampilan status sel
+
+                // Jika puzzle selesai
                 if (isSolved()) {
                     JOptionPane.showMessageDialog(null, "Congratulations! You have solved the puzzle!", "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Invalid input! Please enter a number.", "Error", JOptionPane.ERROR_MESSAGE);
-                sourceCell.setText("");
+                sourceCell.setText(""); // Bersihkan teks jika input tidak valid
             }
         }
     }
