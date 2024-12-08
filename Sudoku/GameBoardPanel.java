@@ -16,20 +16,20 @@ public class GameBoardPanel extends JPanel {
     public static final int BOARD_HEIGHT = CELL_SIZE * SudokuConstants.GRID_SIZE;
 
     // Define properties
-    private Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
-    private Puzzle puzzle = new Puzzle();
+    private final Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
+    private final Puzzle puzzle = new Puzzle();
     private boolean isPaused = false;
 
     public void setPaused(boolean isPaused) {
         this.isPaused = isPaused;
     }
 
-
-
-    @Override
-    public void processMouseEvent(MouseEvent e) {
-        if (!isPaused) {
-            super.processMouseEvent(e); // Interaction when not paused
+    // Add method to retrieve a specific cell by row and column
+    public Cell getCell(int row, int col) {
+        if (row >= 0 && row < SudokuConstants.GRID_SIZE && col >= 0 && col < SudokuConstants.GRID_SIZE) {
+            return cells[row][col];
+        } else {
+            throw new IllegalArgumentException("Invalid cell position: (" + row + ", " + col + ")");
         }
     }
 
@@ -115,38 +115,15 @@ public class GameBoardPanel extends JPanel {
 
         return hintMessage;
     }
-    //dark mode tapi di timernya aja sih
+
     public void setDarkMode(boolean isDark) {
         this.isDark = isDark;
         if (isDark) {
             setBackground(Color.BLACK);
-            // Tambahkan logika tambahan untuk mengubah warna elemen lain di board, jika diperlukan
         } else {
             setBackground(Color.WHITE);
-            // Tambahkan logika tambahan untuk mengembalikan warna elemen ke mode terang
         }
         repaint(); // Repaint untuk memperbarui tampilan
-    }
-
-    public void pauseGame() {
-        isPaused = !isPaused;
-
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                if (cells[row][col].isEditable()) {
-                    cells[row][col].setEnabled(!isPaused);
-                    cells[row][col].setFocusable(!isPaused); // Menonaktifkan input keyboard
-
-                    if (isPaused) {
-                        for (ActionListener al : cells[row][col].getActionListeners()) {
-                            cells[row][col].removeActionListener(al);
-                        }
-                    } else {
-                        cells[row][col].addActionListener(new CellInputListener());
-                    }
-                }
-            }
-        }
     }
 
     public boolean isSolved() {
@@ -186,12 +163,11 @@ public class GameBoardPanel extends JPanel {
             }
         }
 
-        // Jika lolos semua pengecekan, langkah valid
         return true;
     }
 
     public boolean checkAnswer(int row, int col, int numberIn) {
-        return cells[row][col].number == numberIn; // Pastikan sel sesuai dengan angka yang benar
+        return cells[row][col].number == numberIn;
     }
 
     private class CellInputListener implements ActionListener {
@@ -213,13 +189,12 @@ public class GameBoardPanel extends JPanel {
 
                 sourceCell.paint(); // Perbarui tampilan status sel
 
-                // Jika puzzle selesai
                 if (isSolved()) {
                     JOptionPane.showMessageDialog(null, "Congratulations! You have solved the puzzle!", "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Invalid input! Please enter a number.", "Error", JOptionPane.ERROR_MESSAGE);
-                sourceCell.setText(""); // Bersihkan teks jika input tidak valid
+                sourceCell.setText("");
             }
         }
     }
