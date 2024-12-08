@@ -2,7 +2,7 @@ import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import Sudoku.Sudoku;  // Untuk kelas Sudoku
-//import TicTacToe.TTT;  // Untuk kelas TicTacToe
+import TicTacToe.GameMain;  // Untuk kelas TicTacToe
 //import Othello.OthelloGame;  // Untuk kelas Othello
 
 public class MainMenu extends JFrame {
@@ -40,20 +40,18 @@ public class MainMenu extends JFrame {
 
         // Action listeners untuk tombol Sudoku
         btnSudoku.addActionListener(e -> {
-            Sudoku sudokuGame = new Sudoku(); // Membuka game Sudoku
-            sudokuGame.showDifficultyDialog(); // Menampilkan dialog tingkat kesulitan
+            new Sudoku(); // Membuka game Sudoku, dialog akan otomatis muncul
             dispose(); // Menutup menu utama
         });
 
         // Action listeners untuk tombol Tic Tac Toe
-        /*btnTicTacToe.addActionListener(e -> {
-            TicTacToeGame ticTacToeGame = new TicTacToeGame(); // Membuka game Tic Tac Toe
-            ticTacToeGame.setVisible(true); // Menampilkan jendela game Tic Tac Toe
+        btnTicTacToe.addActionListener(e -> {
+            new GameMain();
             dispose(); // Menutup menu utama
         });
 
         // Action listeners untuk tombol Othello
-        btnOthello.addActionListener(e -> {
+        /*btnOthello.addActionListener(e -> {
             OthelloGame othelloGame = new OthelloGame(); // Membuka game Othello
             othelloGame.setVisible(true); // Menampilkan jendela game Othello
             dispose(); // Menutup menu utama

@@ -3,33 +3,41 @@ package Sudoku;
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 public class Sudoku extends JFrame {
     private static final long serialVersionUID = 1L;
-    private int timeElapsed = 0;
-    private int score = 0;
-    private Timer timer;
-    private JLabel timerLabel;
     private boolean isPaused = false;
     private boolean isDarkMode = false;
     private CountdownTimer countdownTimer; // Timer countdown
     private JLabel countdownTimerLabel;
-    GameBoardPanel board = new GameBoardPanel();
-    JButton btnNewGame = new JButton("New Game");
-    JTextField statusBar = new JTextField("Welcome to Sudoku!");
+    private GameBoardPanel board;
+    private JLabel timerLabel;
     private JLabel scoreLabel;
     private JButton darkModeButton;
 
     public Sudoku() {
-        SoundEffect backSound = new SoundEffect("sudoku/bensound-clearday.wav");
-        backSound.play(); // Memulai backsound
+        // Tampilkan dialog selamat datang
+        showWelcomeDialog();
+
+        // Dialog tingkat kesulitan hanya sekali setelah welcome dialog
+        String difficulty = showDifficultyDialog();
+
+        // Setup papan permainan dengan tingkat kesulitan
+        setupGameBoard(difficulty);
+    }
+
+    private void setupGameBoard(String difficulty) {
+        // Inisialisasi papan permainan
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
+        board = new GameBoardPanel(); // Membuat papan permainan
+        board.newGame(difficulty); // Mulai permainan dengan tingkat kesulitan yang dipilih
         cp.add(board, BorderLayout.CENTER);
+
+        JButton btnNewGame = new JButton("New Game");
+        btnNewGame.addActionListener(e -> resetGame());
         cp.add(btnNewGame, BorderLayout.SOUTH);
-        board.newGame("easy");
 
         JPanel sidePanel = new JPanel();
         sidePanel.setLayout(new BoxLayout(sidePanel, BoxLayout.Y_AXIS));
@@ -38,53 +46,33 @@ public class Sudoku extends JFrame {
         sidePanel.add(hintButton);
         sidePanel.add(pauseButton);
 
-        JMenu optionMenu = new JMenu("Option");
-
-        JMenuItem toggleSoundItem = new JMenuItem("Toggle Sound");
-        toggleSoundItem.addActionListener(new ActionListener() {
-            private boolean isPlaying = true;
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                if (isPlaying) {
-                    backSound.stop(); // Hentikan audio
-                    isPlaying = false;
-                } else {
-                    backSound.play(); // Putar ulang audio
-                    isPlaying = true;
-                }
-            }
-        });
-
-        // Add Dark Mode button
         darkModeButton = new JButton("Dark Mode");
         darkModeButton.addActionListener(e -> toggleDarkMode());
         sidePanel.add(darkModeButton);
 
-        // Create score label and add to the side panel
         scoreLabel = new JLabel("Score: 0");
         sidePanel.add(scoreLabel);
 
         cp.add(sidePanel, BorderLayout.EAST);
 
-        JMenuBar menuBar = new JMenuBar();
-        JMenu menuFile = new JMenu("File");
-        JMenuItem newGame = new JMenuItem("New Game");
-        JMenuItem resetGame = new JMenuItem("Reset Game");
-        JMenuItem exit = new JMenuItem("Exit");
-        menuFile.add(newGame);
-        menuFile.add(resetGame);
-        menuFile.add(exit);
-        menuBar.add(menuFile);
-        setJMenuBar(menuBar);
+        timerLabel = new JLabel("Time: 0", JLabel.CENTER);
+        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        cp.add(timerLabel, BorderLayout.NORTH);
 
-        btnNewGame.addActionListener(e -> showDifficultyDialog());
-        newGame.addActionListener(e -> showDifficultyDialog());
-        resetGame.addActionListener(e -> board.resetGame());
-        exit.addActionListener(e -> System.exit(0));
+        countdownTimerLabel = new JLabel("Time Left: 0", JLabel.CENTER);
+        countdownTimerLabel.setFont(new Font("Arial", Font.BOLD, 20));
+        cp.add(countdownTimerLabel, BorderLayout.NORTH);
+
+        countdownTimer = new CountdownTimer(countdownTimerLabel, this);
+        countdownTimer.setTime(difficulty);
+        countdownTimer.startTimer();
+
+        board.setScoreLabel(scoreLabel);
+
         hintButton.addActionListener(e -> {
             if (!isPaused) {
-                String hint = board.getHint();
+                String hint;
+                hint = board.getHint();
                 if (hint != null) {
                     JOptionPane.showMessageDialog(this, hint, "Hint", JOptionPane.INFORMATION_MESSAGE);
                 } else {
@@ -95,53 +83,22 @@ public class Sudoku extends JFrame {
             }
         });
 
-        // Pause button logic
         pauseButton.addActionListener(e -> togglePause(pauseButton));
-
-        // Timer setup
-        timerLabel = new JLabel("Time: 0", JLabel.CENTER);
-        timerLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        add(timerLabel, BorderLayout.NORTH);
-
-        // Countdown timer setup
-        countdownTimerLabel = new JLabel("Time Left: 0", JLabel.CENTER);
-        countdownTimerLabel.setFont(new Font("Arial", Font.BOLD, 20));
-        add(countdownTimerLabel, BorderLayout.NORTH);
-        countdownTimer = new CountdownTimer(countdownTimerLabel, this);
-
-        // Main timer
-        timer = new Timer(1000, new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                if (!isPaused) {
-                    timeElapsed++;
-                    timerLabel.setText("Time: " + timeElapsed);
-                }
-            }
-        });
-        timer.start();
-
-        // Link scoreLabel to GameBoardPanel
-        board.setScoreLabel(scoreLabel);
 
         pack();
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("Sudoku");
         setVisible(true);
-        showWelcomeDialog();
     }
 
     private void togglePause(JButton pauseButton) {
         if (!isPaused) {
-            // Pause both timers
-            timer.stop();
             countdownTimer.stopTimer();
             disableGameBoard(true);
             board.setPaused(true);
             pauseButton.setText("Resume");
             isPaused = true;
         } else {
-            // Resume both timers
-            timer.start();
             countdownTimer.startTimer();
             disableGameBoard(false);
             board.setPaused(false);
@@ -151,8 +108,34 @@ public class Sudoku extends JFrame {
     }
 
     private void toggleDarkMode() {
-        isDarkMode = !isDarkMode;
-        updateDarkMode();
+        isDarkMode = !isDarkMode; // Toggle antara true/false
+        applyTheme(getContentPane()); // Terapkan tema ke seluruh container utama
+        board.applyTheme(isDarkMode); // Terapkan tema ke papan permainan
+        darkModeButton.setText(isDarkMode ? "Light Mode" : "Dark Mode"); // Update teks tombol
+        repaint(); // Re-render GUI
+    }
+
+    private void applyTheme(Component component) {
+        Color background;
+        Color foreground;
+
+        if (isDarkMode) {
+            background = Color.BLACK;
+            foreground = Color.WHITE;
+        } else {
+            // Light mode dengan warna ungu pastel
+            background = new Color(238, 196, 255); // Warna ungu pastel
+            foreground = Color.BLACK;
+        }
+
+        component.setBackground(background);
+        component.setForeground(foreground);
+
+        if (component instanceof Container) {
+            for (Component child : ((Container) component).getComponents()) {
+                applyTheme(child);  // Apply theme ke semua komponen dalam container
+            }
+        }
     }
 
     private void updateDarkMode() {
@@ -187,7 +170,7 @@ public class Sudoku extends JFrame {
         welcomeDialog.setVisible(true);
     }
 
-    public void showDifficultyDialog() {
+    public String showDifficultyDialog() {
         String[] options = {"Easy", "Medium", "Hard"};
         int choice = JOptionPane.showOptionDialog(
                 this,
@@ -197,15 +180,21 @@ public class Sudoku extends JFrame {
                 JOptionPane.QUESTION_MESSAGE,
                 null,
                 options,
-                options[1]
+                options[0]
         );
 
         if (choice >= 0) {
-            String difficulty = options[choice];
-            board.newGame(difficulty.toLowerCase()); // Mulai permainan baru
-            countdownTimer.setTime(difficulty.toLowerCase()); // Set waktu countdown sesuai kesulitan
-            countdownTimer.startTimer(); // Mulai countdown timer
+            return options[choice].toLowerCase();
+        } else {
+            return "easy"; // Default ke easy jika tidak ada pilihan
         }
+    }
+
+    private void resetGame() {
+        String difficulty = showDifficultyDialog();
+        board.newGame(difficulty);
+        countdownTimer.setTime(difficulty);
+        countdownTimer.startTimer();
     }
 
     void disableGameBoard(boolean disable) {
