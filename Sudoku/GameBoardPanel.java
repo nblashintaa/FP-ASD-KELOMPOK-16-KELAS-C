@@ -5,31 +5,38 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class GameBoardPanel extends JPanel {
-    private static final long serialVersionUID = 1L; // To prevent serial warning
-    private int score = 0;
+    private static final long serialVersionUID = 1L;
+    private static final int MAX_HINTS = 5; // Maksimum penggunaan hint
+    private int hintsUsed = 0; // Melacak jumlah hint yang telah digunakan
+    private int score = 0; // Skor permainan
     private JLabel scoreLabel;
     private boolean isDark = false;
 
-    // Define named constants for UI sizes
-    public static final int CELL_SIZE = 60; // Cell width/height in pixels
+    // Konstanta untuk UI
+    public static final int CELL_SIZE = 60;
     public static final int BOARD_WIDTH = CELL_SIZE * SudokuConstants.GRID_SIZE;
     public static final int BOARD_HEIGHT = CELL_SIZE * SudokuConstants.GRID_SIZE;
 
-    // Define properties
-    private Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
-    private Puzzle puzzle = new Puzzle();
+    // Properti
+    private final Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
+    private final Puzzle puzzle = new Puzzle();
     private boolean isPaused = false;
 
     public void setPaused(boolean isPaused) {
         this.isPaused = isPaused;
     }
 
+    // Tambahkan metode untuk mendapatkan jumlah hint yang tersisa
+    public int getHintsRemaining() {
+        return MAX_HINTS - hintsUsed;
+    }
 
-
-    @Override
-    public void processMouseEvent(MouseEvent e) {
-        if (!isPaused) {
-            super.processMouseEvent(e); // Interaction when not paused
+    // Tambahkan metode untuk mendapatkan sebuah sel
+    public Cell getCell(int row, int col) {
+        if (row >= 0 && row < SudokuConstants.GRID_SIZE && col >= 0 && col < SudokuConstants.GRID_SIZE) {
+            return cells[row][col];
+        } else {
+            throw new IllegalArgumentException("Invalid cell position: (" + row + ", " + col + ")");
         }
     }
 
@@ -39,7 +46,7 @@ public class GameBoardPanel extends JPanel {
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
 
-        // Create a grid for cells
+        // Membuat grid untuk sel
         JPanel cellPanel = new JPanel(new GridLayout(SudokuConstants.GRID_SIZE, SudokuConstants.GRID_SIZE));
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
@@ -49,7 +56,7 @@ public class GameBoardPanel extends JPanel {
         }
         super.add(cellPanel, BorderLayout.CENTER);
 
-        // Add listener for editable cells
+        // Tambahkan listener untuk sel yang dapat diedit
         CellInputListener listener = new CellInputListener();
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
@@ -83,7 +90,35 @@ public class GameBoardPanel extends JPanel {
             }
         }
         score = 0;
+        hintsUsed = 0; // Reset jumlah hint
         updateScore(0);
+    }
+
+    // Metode untuk memberikan hint
+    public String getHint() {
+        if (hintsUsed >= MAX_HINTS) {
+            return "You have used all 5 hints!";
+        }
+
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                Cell cell = cells[row][col];
+
+                // Jika sel kosong dan tidak diberikan sebelumnya
+                if (cell.getText().isEmpty() && !puzzle.isGiven[row][col]) {
+                    int correctNumber = puzzle.numbers[row][col]; // Angka yang benar
+                    cell.setForeground(Color.GRAY); // Warna angka samar
+                    cell.setText(String.valueOf(correctNumber));
+                    cell.setEditable(false); // Hint tidak boleh diubah
+
+                    hintsUsed++;
+                    updateScore(-2); // Kurangi skor untuk setiap hint
+                    return "Hint added at (" + row + ", " + col + "). Remaining hints: " + getHintsRemaining();
+                }
+            }
+        }
+
+        return "No empty cells available for hint!";
     }
 
     public void resetGame() {
@@ -97,56 +132,8 @@ public class GameBoardPanel extends JPanel {
             }
         }
         score = 0;
+        hintsUsed = 0; // Reset jumlah hint
         updateScore(0);
-    }
-
-    public String getHint() {
-        int targetRow = 2;
-        int targetCol = 3;
-        int suggestedNumber = 5;
-
-        boolean isGreater = Math.random() > 0.5;
-        String hintMessage = "Try placing " + suggestedNumber + " at row " + targetRow + ", column " + targetCol + ".";
-        if (isGreater) {
-            hintMessage += " The correct number is greater than " + suggestedNumber + ".";
-        } else {
-            hintMessage += " The correct number is less than " + suggestedNumber + ".";
-        }
-
-        return hintMessage;
-    }
-    //dark mode tapi di timernya aja sih
-    public void setDarkMode(boolean isDark) {
-        this.isDark = isDark;
-        if (isDark) {
-            setBackground(Color.BLACK);
-            // Tambahkan logika tambahan untuk mengubah warna elemen lain di board, jika diperlukan
-        } else {
-            setBackground(Color.WHITE);
-            // Tambahkan logika tambahan untuk mengembalikan warna elemen ke mode terang
-        }
-        repaint(); // Repaint untuk memperbarui tampilan
-    }
-
-    public void pauseGame() {
-        isPaused = !isPaused;
-
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
-                if (cells[row][col].isEditable()) {
-                    cells[row][col].setEnabled(!isPaused);
-                    cells[row][col].setFocusable(!isPaused); // Menonaktifkan input keyboard
-
-                    if (isPaused) {
-                        for (ActionListener al : cells[row][col].getActionListeners()) {
-                            cells[row][col].removeActionListener(al);
-                        }
-                    } else {
-                        cells[row][col].addActionListener(new CellInputListener());
-                    }
-                }
-            }
-        }
     }
 
     public boolean isSolved() {
@@ -160,38 +147,19 @@ public class GameBoardPanel extends JPanel {
         return true;
     }
 
-    public boolean isValidMove(int row, int col, int number) {
-        // Periksa apakah angka tersebut sudah ada di baris yang sama
-        for (int i = 0; i < SudokuConstants.GRID_SIZE; i++) {
-            if (cells[row][i].number == number) {
-                return false;
-            }
-        }
-
-        // Periksa apakah angka tersebut sudah ada di kolom yang sama
-        for (int i = 0; i < SudokuConstants.GRID_SIZE; i++) {
-            if (cells[i][col].number == number) {
-                return false;
-            }
-        }
-
-        // Periksa apakah angka tersebut sudah ada di kotak 3x3
-        int boxRowStart = (row / 3) * 3;
-        int boxColStart = (col / 3) * 3;
-        for (int i = boxRowStart; i < boxRowStart + 3; i++) {
-            for (int j = boxColStart; j < boxColStart + 3; j++) {
-                if (cells[i][j].number == number) {
-                    return false;
+    public void applyTheme(boolean isDarkMode) {
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
+                Cell cell = getCell(row, col);
+                if (cell != null) {
+                    cell.setDarkMode(isDarkMode); // Set dark mode for each cell
                 }
             }
         }
-
-        // Jika lolos semua pengecekan, langkah valid
-        return true;
     }
 
     public boolean checkAnswer(int row, int col, int numberIn) {
-        return cells[row][col].number == numberIn; // Pastikan sel sesuai dengan angka yang benar
+        return cells[row][col].number == numberIn;
     }
 
     private class CellInputListener implements ActionListener {
@@ -213,13 +181,12 @@ public class GameBoardPanel extends JPanel {
 
                 sourceCell.paint(); // Perbarui tampilan status sel
 
-                // Jika puzzle selesai
                 if (isSolved()) {
                     JOptionPane.showMessageDialog(null, "Congratulations! You have solved the puzzle!", "Puzzle Solved", JOptionPane.INFORMATION_MESSAGE);
                 }
             } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Invalid input! Please enter a number.", "Error", JOptionPane.ERROR_MESSAGE);
-                sourceCell.setText(""); // Bersihkan teks jika input tidak valid
+                sourceCell.setText("");
             }
         }
     }
