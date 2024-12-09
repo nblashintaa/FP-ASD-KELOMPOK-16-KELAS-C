@@ -71,13 +71,8 @@ public class Sudoku extends JFrame {
 
         hintButton.addActionListener(e -> {
             if (!isPaused) {
-                String hint;
-                hint = board.getHint();
-                if (hint != null) {
-                    JOptionPane.showMessageDialog(this, hint, "Hint", JOptionPane.INFORMATION_MESSAGE);
-                } else {
-                    JOptionPane.showMessageDialog(this, "No hints available!", "Hint", JOptionPane.INFORMATION_MESSAGE);
-                }
+                String hintMessage = board.getHint();
+                JOptionPane.showMessageDialog(this, hintMessage, "Hint", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "Game is paused!", "Hint", JOptionPane.WARNING_MESSAGE);
             }

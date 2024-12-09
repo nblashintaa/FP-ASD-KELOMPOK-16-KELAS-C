@@ -5,17 +5,19 @@ import java.awt.event.*;
 import javax.swing.*;
 
 public class GameBoardPanel extends JPanel {
-    private static final long serialVersionUID = 1L; // To prevent serial warning
-    private int score = 0;
+    private static final long serialVersionUID = 1L;
+    private static final int MAX_HINTS = 5; // Maksimum penggunaan hint
+    private int hintsUsed = 0; // Melacak jumlah hint yang telah digunakan
+    private int score = 0; // Skor permainan
     private JLabel scoreLabel;
     private boolean isDark = false;
 
-    // Define named constants for UI sizes
-    public static final int CELL_SIZE = 60; // Cell width/height in pixels
+    // Konstanta untuk UI
+    public static final int CELL_SIZE = 60;
     public static final int BOARD_WIDTH = CELL_SIZE * SudokuConstants.GRID_SIZE;
     public static final int BOARD_HEIGHT = CELL_SIZE * SudokuConstants.GRID_SIZE;
 
-    // Define properties
+    // Properti
     private final Cell[][] cells = new Cell[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
     private final Puzzle puzzle = new Puzzle();
     private boolean isPaused = false;
@@ -24,7 +26,12 @@ public class GameBoardPanel extends JPanel {
         this.isPaused = isPaused;
     }
 
-    // Add method to retrieve a specific cell by row and column
+    // Tambahkan metode untuk mendapatkan jumlah hint yang tersisa
+    public int getHintsRemaining() {
+        return MAX_HINTS - hintsUsed;
+    }
+
+    // Tambahkan metode untuk mendapatkan sebuah sel
     public Cell getCell(int row, int col) {
         if (row >= 0 && row < SudokuConstants.GRID_SIZE && col >= 0 && col < SudokuConstants.GRID_SIZE) {
             return cells[row][col];
@@ -39,7 +46,7 @@ public class GameBoardPanel extends JPanel {
     public GameBoardPanel() {
         super.setLayout(new BorderLayout());
 
-        // Create a grid for cells
+        // Membuat grid untuk sel
         JPanel cellPanel = new JPanel(new GridLayout(SudokuConstants.GRID_SIZE, SudokuConstants.GRID_SIZE));
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
@@ -49,7 +56,7 @@ public class GameBoardPanel extends JPanel {
         }
         super.add(cellPanel, BorderLayout.CENTER);
 
-        // Add listener for editable cells
+        // Tambahkan listener untuk sel yang dapat diedit
         CellInputListener listener = new CellInputListener();
         for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
@@ -83,7 +90,35 @@ public class GameBoardPanel extends JPanel {
             }
         }
         score = 0;
+        hintsUsed = 0; // Reset jumlah hint
         updateScore(0);
+    }
+
+    // Metode untuk memberikan hint
+    public String getHint() {
+        if (hintsUsed >= MAX_HINTS) {
+            return "You have used all 5 hints!";
+        }
+
+        for (int row = 0; row < SudokuConstants.GRID_SIZE; ++row) {
+            for (int col = 0; col < SudokuConstants.GRID_SIZE; ++col) {
+                Cell cell = cells[row][col];
+
+                // Jika sel kosong dan tidak diberikan sebelumnya
+                if (cell.getText().isEmpty() && !puzzle.isGiven[row][col]) {
+                    int correctNumber = puzzle.numbers[row][col]; // Angka yang benar
+                    cell.setForeground(Color.GRAY); // Warna angka samar
+                    cell.setText(String.valueOf(correctNumber));
+                    cell.setEditable(false); // Hint tidak boleh diubah
+
+                    hintsUsed++;
+                    updateScore(-2); // Kurangi skor untuk setiap hint
+                    return "Hint added at (" + row + ", " + col + "). Remaining hints: " + getHintsRemaining();
+                }
+            }
+        }
+
+        return "No empty cells available for hint!";
     }
 
     public void resetGame() {
@@ -97,28 +132,8 @@ public class GameBoardPanel extends JPanel {
             }
         }
         score = 0;
+        hintsUsed = 0; // Reset jumlah hint
         updateScore(0);
-    }
-
-    public void setDarkMode(boolean isDark) {
-        this.isDark = isDark;
-        if (isDark) {
-            setBackground(Color.BLACK);
-        } else {
-            setBackground(Color.WHITE);
-        }
-        repaint(); // Repaint untuk memperbarui tampilan
-    }
-
-    public void applyTheme(boolean isDarkMode) {
-        for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
-            for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
-                Cell cell = getCell(row, col);
-                if (cell != null) {
-                    cell.setDarkMode(isDarkMode); // Set dark mode for each cell
-                }
-            }
-        }
     }
 
     public boolean isSolved() {
@@ -132,21 +147,19 @@ public class GameBoardPanel extends JPanel {
         return true;
     }
 
-    public boolean checkAnswer(int row, int col, int numberIn) {
-        return cells[row][col].number == numberIn;
-    }
-
-    // Method to provide a hint
-    public String getHint() {
+    public void applyTheme(boolean isDarkMode) {
         for (int row = 0; row < SudokuConstants.GRID_SIZE; row++) {
             for (int col = 0; col < SudokuConstants.GRID_SIZE; col++) {
-                // Check if the cell is empty and not given
-                if (cells[row][col].getText().isEmpty() && !puzzle.isGiven[row][col]) {
-                    return "Hint: Try filling the cell at (" + row + ", " + col + ")";
+                Cell cell = getCell(row, col);
+                if (cell != null) {
+                    cell.setDarkMode(isDarkMode); // Set dark mode for each cell
                 }
             }
         }
-        return "No more hints available!";  // No hint available if no empty cell
+    }
+
+    public boolean checkAnswer(int row, int col, int numberIn) {
+        return cells[row][col].number == numberIn;
     }
 
     private class CellInputListener implements ActionListener {
