@@ -1,11 +1,13 @@
-import java.awt.*;
+import Sudoku.Sudoku;
+import TicTacToe.GameMain;
+
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import Sudoku.Sudoku;  // Untuk kelas Sudoku
-import TicTacToe.GameMain;  // Untuk kelas TicTacToe
+import java.awt.*;
+import java.io.Serial;
 //import Othello.OthelloGame;  // Untuk kelas Othello
 
 public class MainMenu extends JFrame {
+    @Serial
     private static final long serialVersionUID = 1L;
 
     public MainMenu() {
@@ -67,6 +69,6 @@ public class MainMenu extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new MainMenu()); // Menjalankan Main Menu
+        SwingUtilities.invokeLater(MainMenu::new); // Menjalankan Main Menu
     }
 }
