@@ -1,30 +1,42 @@
 package TicTacToe;
-/**
- * The Cell class models each individual cell of the TTT 3x3 grid.
- */
-public class Cell {  // save as "Cell.java"
-    // Define properties (package-visible)
-    /** Content of this cell (CROSS, NOUGHT, NO_SEED) */
-    Seed content;
-    /** Row and column of this cell, not used in this program */
-    int row, col;
 
-    /** Constructor to initialize this cell */
+
+import java.awt.*;
+import java.awt.image.ImageObserver;
+
+public class Cell {
+    public static final int SIZE = 120;
+    public static final int PADDING = 24;
+    public static final int SEED_SIZE = 72;
+    Seed content;
+    int row;
+    int col;
+
     public Cell(int row, int col) {
         this.row = row;
         this.col = col;
         this.content = Seed.NO_SEED;
     }
 
-    /** Reset the cell content to EMPTY, ready for a new game. */
     public void newGame() {
         this.content = Seed.NO_SEED;
     }
 
-    /** The cell paints itself */
-    public void paint() {
-        // Retrieve the display icon (text) and print
-        String icon = this.content.getIcon();
-        System.out.print(icon);
+    public void paint(Graphics g) {
+        int x1 = this.col * 120 + 24;
+        int y1 = this.row * 120 + 24;
+        if (this.content == Seed.CROSS || this.content == Seed.NOUGHT) {
+            g.drawImage(this.content.getImage(), x1, y1, 72, 72, (ImageObserver)null);
+        }
+
+    }
+
+    public void paint(Graphics g, int x, int y) {
+        g.setColor(Color.BLACK);
+        g.drawRect(x, y, 120, 120);
+        if (this.content != Seed.NO_SEED) {
+            g.drawImage(this.content.getImage(), x, y, 120, 120, (ImageObserver)null);
+        }
+
     }
 }
