@@ -5,12 +5,13 @@ import java.awt.*;
 import java.net.URL;
 
 public enum Seed {
-    CROSS("X", "cat.gif"),
-    NOUGHT("O", "mouse.gif"),
+    CROSS("X", "cat.gif.gif"),
+    NOUGHT("O", "mouse.gif.gif"),
     NO_SEED(" ", (String)null);
 
     private String displayName;
     private Image img = null;
+    private ImageIcon icon = null;
 
     private Seed(String name, String imageFilename) {
         this.displayName = name;
@@ -34,5 +35,9 @@ public enum Seed {
 
     public Image getImage() {
         return this.img;
+    }
+
+    public ImageIcon getIcon() {
+        return this.icon;
     }
 }

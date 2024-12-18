@@ -19,6 +19,7 @@ public class TTTGUI extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+
         // Initialize the board and game state
         board = new Board();
         currentPlayer = Seed.CROSS;  // CROSS starts first
@@ -64,7 +65,7 @@ public class TTTGUI extends JFrame {
             if (currentState == State.PLAYING && board.cells[row][col].content == Seed.NO_SEED) {
                 // Player makes a move
                 board.cells[row][col].content = currentPlayer;
-                buttons[row][col].setText(currentPlayer.getIcon());
+
 
                 // Check for the game state after the move
                 currentState = board.stepGame(currentPlayer, row, col);
