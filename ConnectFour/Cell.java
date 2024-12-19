@@ -1,37 +1,41 @@
 package ConnectFour;
 
+import java.awt.*;
+
 public class Cell {
-        // Define named constants for drawing
-        public static final int SIZE = 120; // cell width/height (square)
-        // Symbols (cross/nought) are displayed inside a cell, with padding from border
-        public static final int PADDING = SIZE / 5;
-        public static final int SEED_SIZE = SIZE - PADDING * 2;
+    public static final int SIZE = 100; // Ukuran satu sel
+    public Seed content;               // Isi sel: CROSS, NOUGHT, atau kosong
+    private int row, col;              // Posisi sel pada papan
 
-        // Define properties (package-visible)
-        /** Content of this cell (Seed.EMPTY, Seed.CROSS, or Seed.NOUGHT) */
-        Seed content;
-        /** Row and column of this cell */
-        int row, col;
+    /** Konstruktor */
+    public Cell(int row, int col) {
+        this.row = row;
+        this.col = col;
+        this.content = Seed.NO_SEED; // Awalnya kosong
+    }
 
-        /** Constructor to initialize this cell with the specified row and col */
-        public Cell(int row, int col) {
-            this.row = row;
-            this.col = col;
-            content = Seed.NO_SEED;
-        }
+    /** Menggambar isi sel di canvas */
+    public void paint(Graphics g) {
+        int x = col * SIZE;
+        int y = row * SIZE;
 
-        /** Reset this cell's content to EMPTY, ready for new game */
-        public void newGame() {
-            content = Seed.NO_SEED;
-        }
+        // Gambar kotak sel
+        g.setColor(Color.LIGHT_GRAY);
+        g.fillRect(x, y, SIZE, SIZE);
 
-        /** Paint itself on the graphics canvas, given the Graphics context */
-        public void paint(Graphics g) {
-            // Draw the Seed if it is not empty
-            int x1 = col * SIZE + PADDING;
-            int y1 = row * SIZE + PADDING;
-            if (content == Seed.CROSS || content == Seed.NOUGHT) {
-                g.drawImage(content.getImage(), x1, y1, SEED_SIZE, SEED_SIZE, null);
-            }
+        // Gambar isi sel berdasarkan konten
+        if (content == Seed.CROSS) {
+            g.setColor(GameMain.COLOR_CROSS);
+            g.drawLine(x + 10, y + 10, x + SIZE - 10, y + SIZE - 10);
+            g.drawLine(x + 10, y + SIZE - 10, x + SIZE - 10, y + 10);
+        } else if (content == Seed.NOUGHT) {
+            g.setColor(GameMain.COLOR_NOUGHT);
+            g.drawOval(x + 10, y + 10, SIZE - 20, SIZE - 20);
         }
     }
+
+    /** Reset isi sel ke kosong */
+    public void clear() {
+        content = Seed.NO_SEED;
+    }
+}
