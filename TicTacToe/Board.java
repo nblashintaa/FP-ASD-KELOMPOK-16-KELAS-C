@@ -1,105 +1,93 @@
 package TicTacToe;
 
-import java.awt.Color;
-import java.awt.Graphics;
+import TicTacToe.State;
 
-/**
- * Represents the Tic Tac Toe board and handles the game state.
- */
-public class Board {
-    public static final int ROWS = 3;  // Size of the board (3x3)
-    public static final int COLS = 3;  // Size of the board (3x3)
-    public Cell[][] cells;            // 2D array to hold the cells
+public class Board {  // save as "Board.java"
+    // Define named constants for the grid
+    public static final int ROWS = 6;
+    public static final int COLS = 6;
 
+    // Define properties (package-visible)
+    /** A board composes of [ROWS]x[COLS] Cell instances */
+    Cell[][] cells;
+
+    /** Constructor to initialize the game board */
     public Board() {
-        cells = new Cell[ROWS][COLS];  // Initialize 3x3 board
+        initGame();
+    }
+
+    /** Initialize the board (run once) */
+    public void initGame() {
+        cells = new Cell[ROWS][COLS];  // allocate the array
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
-                cells[row][col] = new Cell();
+                // Allocate element of the array
+                cells[row][col] = new Cell(row, col);
             }
         }
     }
 
+    /** Reset the contents of the game board, ready for new game. */
     public void newGame() {
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
-                cells[row][col].content = Seed.NO_SEED;
+                cells[row][col].newGame();  // The cells init itself
             }
         }
     }
 
-    public State stepGame(Seed currentPlayer, int row, int col) {
-        cells[row][col].content = currentPlayer;
+    /**
+     *  The given player makes a move on (selectedRow, selectedCol).
+     *  Update cells[selectedRow][selectedCol]. Compute and return the
+     *  new game state (PLAYING, DRAW, CROSS_WON, NOUGHT_WON).
+     */
+    public State stepGame(Seed player, int selectedRow, int selectedCol) {
+        // Update game board
+        cells[selectedRow][selectedCol].content = player;
 
-        if (checkWin(currentPlayer)) {
-            return currentPlayer == Seed.CROSS ? State.CROSS_WON : State.NOUGHT_WON;
-        }
-
-        for (int rowCheck = 0; rowCheck < ROWS; rowCheck++) {
-            for (int colCheck = 0; colCheck < COLS; colCheck++) {
-                if (cells[rowCheck][colCheck].content == Seed.NO_SEED) {
-                    return State.PLAYING;
+        // Compute and return the new game state
+        if (cells[selectedRow][0].content == player  // 3-in-the-row
+                && cells[selectedRow][1].content == player
+                && cells[selectedRow][2].content == player
+                || cells[0][selectedCol].content == player // 3-in-the-column
+                && cells[1][selectedCol].content == player
+                && cells[2][selectedCol].content == player
+                || selectedRow == selectedCol         // 3-in-the-diagonal
+                && cells[0][0].content == player
+                && cells[1][1].content == player
+                && cells[2][2].content == player
+                || selectedRow + selectedCol == 2     // 3-in-the-opposite-diagonal
+                && cells[0][2].content == player
+                && cells[1][1].content == player
+                && cells[2][0].content == player) {
+            return (player == Seed.CROSS) ? State.CROSS_WON : State.NOUGHT_WON;
+        } else {
+            // Nobody win. Check for DRAW (all cells occupied) or PLAYING.
+            for (int row = 0; row < ROWS; ++row) {
+                for (int col = 0; col < COLS; ++col) {
+                    if (cells[row][col].content == Seed.NO_SEED) {
+                        return State.PLAYING; // still have empty cells
+                    }
                 }
             }
+            return State.DRAW; // no empty cell, it's a draw
         }
-
-        return State.DRAW;
     }
 
-    private boolean checkWin(Seed player) {
-        for (int row = 0; row < ROWS; row++) {
-            if (cells[row][0].content == player && cells[row][1].content == player && cells[row][2].content == player) {
-                return true;
+    /** The board paints itself */
+    public void paint() {
+        for (int row = 0; row < ROWS; ++row) {
+            for (int col = 0; col < COLS; ++col) {
+                System.out.print(" ");
+                cells[row][col].paint();   // each cell paints itself
+                System.out.print(" ");
+                if (col < COLS - 1) System.out.print("|");  // column separator
+            }
+            System.out.println();
+            if (row < ROWS - 1) {
+                System.out.println("-----------");  // row separator
             }
         }
-
-        for (int col = 0; col < COLS; col++) {
-            if (cells[0][col].content == player && cells[1][col].content == player && cells[2][col].content == player) {
-                return true;
-            }
-        }
-
-        if (cells[0][0].content == player && cells[1][1].content == player && cells[2][2].content == player) {
-            return true;
-        }
-        if (cells[0][2].content == player && cells[1][1].content == player && cells[2][0].content == player) {
-            return true;
-        }
-
-        return false;
-    }
-
-    public void paint(Graphics g) {
-        g.setColor(Color.BLACK);
-        // Draw grid lines
-        for (int row = 1; row < ROWS; row++) {
-            g.drawLine(0, row * 120, COLS * 120, row * 120);
-        }
-        for (int col = 1; col < COLS; col++) {
-            g.drawLine(col * 120, 0, col * 120, ROWS * 120);
-        }
-
-        // Paint each cell
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                cells[row][col].paint(g, col * 120, row * 120, 120); // Pass size as 120
-            }
-        }
-
-        // Gambar simbol X dan O
-        for (int row = 0; row < ROWS; row++) {
-            for (int col = 0; col < COLS; col++) {
-                int x = col * 120;
-                int y = row * 120;
-                if (cells[row][col].content == Seed.CROSS) {
-                    g.setColor(Color.RED);
-                    g.drawLine(x + 20, y + 20, x + 100, y + 100);  // Garis 1
-                    g.drawLine(x + 100, y + 20, x + 20, y + 100);  // Garis 2
-                } else if (cells[row][col].content == Seed.NOUGHT) {
-                    g.setColor(Color.BLUE);
-                    g.drawOval(x + 20, y + 20, 80, 80);  // Lingkaran
-                }
-            }
-        }
+        System.out.println();
     }
 }
