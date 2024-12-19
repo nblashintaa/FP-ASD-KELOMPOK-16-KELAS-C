@@ -29,9 +29,7 @@ public class GameMain {
             // Update cells[][] and currentState
             stepGame();
             // Refresh the display
-            // Refresh the display
             board.printBoard();
-
             // Print message if game over
             if (currentState == State.CROSS_WON) {
                 System.out.println("'X' won!\nBye!");

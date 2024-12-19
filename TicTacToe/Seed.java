@@ -1,17 +1,21 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package TicTacToe;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Image;
 import java.net.URL;
+import javax.swing.ImageIcon;
 
 public enum Seed {
-    CROSS("X", "cat.gif.gif"),
-    NOUGHT("O", "mouse.gif.gif"),
+    CROSS("X", "cat.gif"),
+    NOUGHT("O", "mouse.gif"),
     NO_SEED(" ", (String)null);
 
     private String displayName;
     private Image img = null;
-    private ImageIcon icon = null;
 
     private Seed(String name, String imageFilename) {
         this.displayName = name;
@@ -35,9 +39,5 @@ public enum Seed {
 
     public Image getImage() {
         return this.img;
-    }
-
-    public ImageIcon getIcon() {
-        return this.icon;
     }
 }
