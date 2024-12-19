@@ -3,13 +3,16 @@ package TicTacToe;
 import java.awt.Color;
 import java.awt.Graphics;
 
+/**
+ * Represents the Tic Tac Toe board and handles the game state.
+ */
 public class Board {
-    public static final int ROWS = 3;  // Ukuran board 3x3
-    public static final int COLS = 3;  // Ukuran board 3x3
-    public Cell[][] cells;            // Array 2D untuk board
+    public static final int ROWS = 3;  // Size of the board (3x3)
+    public static final int COLS = 3;  // Size of the board (3x3)
+    public Cell[][] cells;            // 2D array to hold the cells
 
     public Board() {
-        cells = new Cell[ROWS][COLS];  // Inisialisasi board 3x3
+        cells = new Cell[ROWS][COLS];  // Initialize 3x3 board
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
                 cells[row][col] = new Cell();
@@ -17,53 +20,45 @@ public class Board {
         }
     }
 
-    // Fungsi untuk memulai permainan baru (clear board)
     public void newGame() {
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
-                cells[row][col].content = Seed.NO_SEED; // Setel semua sel kosong
+                cells[row][col].content = Seed.NO_SEED;
             }
         }
     }
 
-    // Langkah permainan
     public State stepGame(Seed currentPlayer, int row, int col) {
-        cells[row][col].content = currentPlayer;  // Isi sel dengan player yang bermain
+        cells[row][col].content = currentPlayer;
 
-        // Periksa apakah ada pemenang
         if (checkWin(currentPlayer)) {
             return currentPlayer == Seed.CROSS ? State.CROSS_WON : State.NOUGHT_WON;
         }
 
-        // Periksa apakah ada posisi kosong lainnya
         for (int rowCheck = 0; rowCheck < ROWS; rowCheck++) {
             for (int colCheck = 0; colCheck < COLS; colCheck++) {
                 if (cells[rowCheck][colCheck].content == Seed.NO_SEED) {
-                    return State.PLAYING;  // Masih ada langkah yang bisa dimainkan
+                    return State.PLAYING;
                 }
             }
         }
 
-        return State.DRAW;  // Jika tidak ada langkah yang tersisa, permainan seri
+        return State.DRAW;
     }
 
-    // Fungsi untuk memeriksa pemenang
     private boolean checkWin(Seed player) {
-        // Periksa baris
         for (int row = 0; row < ROWS; row++) {
             if (cells[row][0].content == player && cells[row][1].content == player && cells[row][2].content == player) {
                 return true;
             }
         }
 
-        // Periksa kolom
         for (int col = 0; col < COLS; col++) {
             if (cells[0][col].content == player && cells[1][col].content == player && cells[2][col].content == player) {
                 return true;
             }
         }
 
-        // Periksa diagonal
         if (cells[0][0].content == player && cells[1][1].content == player && cells[2][2].content == player) {
             return true;
         }
@@ -71,18 +66,24 @@ public class Board {
             return true;
         }
 
-        return false;  // Tidak ada pemenang
+        return false;
     }
 
-    // Fungsi untuk menggambar board ke layar (menambahkan metode paint)
     public void paint(Graphics g) {
-        // Gambar grid board
         g.setColor(Color.BLACK);
+        // Draw grid lines
         for (int row = 1; row < ROWS; row++) {
-            g.drawLine(0, row * 120, 360, row * 120);  // Horizontal lines
+            g.drawLine(0, row * 120, COLS * 120, row * 120);
         }
         for (int col = 1; col < COLS; col++) {
-            g.drawLine(col * 120, 0, col * 120, 360);  // Vertical lines
+            g.drawLine(col * 120, 0, col * 120, ROWS * 120);
+        }
+
+        // Paint each cell
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                cells[row][col].paint(g, col * 120, row * 120, 120); // Pass size as 120
+            }
         }
     }
 }

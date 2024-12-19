@@ -1,118 +1,106 @@
 package TicTacToe;
 
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
 public class TicTacToe extends JPanel {
-    private static final long serialVersionUID = 1L;
-    public static final String TITLE = "Tic Tac Toe";
-    public static final Color COLOR_BG = Color.WHITE;
-    public static final Color COLOR_BG_STATUS = new Color(216, 216, 216);
-    public static final Color COLOR_CROSS = new Color(239, 105, 80);
-    public static final Color COLOR_NOUGHT = new Color(64, 154, 225);
-    public static final Font FONT_STATUS = new Font("OCR A Extended", 0, 14);
-    private Board board;
-    private State currentState;
-    private Seed currentPlayer;
-    private JLabel statusBar;
-
-    // Gambar X dan O
-    private Image crossImage;
-    private Image noughtImage;
+    private static final int GRID_SIZE = 3;
+    private static final int CELL_SIZE = 150;
+    private static final int BOARD_SIZE = CELL_SIZE * GRID_SIZE;
+    private static final int SYMBOL_STROKE_WIDTH = 8;
+    public static final Color COLOR_CROSS = Color.RED;
+    public static final Color COLOR_NOUGHT = Color.BLUE;
+    private char[][] board = new char[GRID_SIZE][GRID_SIZE];
+    private boolean xTurn = true;
+    private String statusMessage = "X's Turn";
 
     public TicTacToe() {
-        super.addMouseListener(new MouseAdapter() {
+        this.setPreferredSize(new Dimension(BOARD_SIZE, BOARD_SIZE + 50));
+        this.addMouseListener(new MouseAdapter() {
+            @Override
             public void mouseClicked(MouseEvent e) {
-                int mouseX = e.getX();
-                int mouseY = e.getY();
-                int row = mouseY / 120;
-                int col = mouseX / 120;
-                if (TicTacToe.this.currentState == State.PLAYING) {
-                    if (row >= 0 && row < 3 && col >= 0 && col < 3 && TicTacToe.this.board.cells[row][col].content == Seed.NO_SEED) {
-                        TicTacToe.this.currentState = TicTacToe.this.board.stepGame(TicTacToe.this.currentPlayer, row, col);
-                        TicTacToe.this.currentPlayer = TicTacToe.this.currentPlayer == Seed.CROSS ? Seed.NOUGHT : Seed.CROSS;
+                int row = e.getY() / CELL_SIZE;
+                int col = e.getX() / CELL_SIZE;
+                if (row < GRID_SIZE && col < GRID_SIZE && board[row][col] == '\0') {
+                    board[row][col] = xTurn ? 'X' : 'O';
+                    if (checkWin(row, col)) {
+                        statusMessage = (xTurn ? "X" : "O") + " Won! Click to play again.";
+                        repaint();
+                        return;
                     }
-                } else {
-                    TicTacToe.this.resetGame();
+                    xTurn = !xTurn;
+                    statusMessage = xTurn ? "X's Turn" : "O's Turn";
+                    repaint();
+                } else if (row >= GRID_SIZE) { // Reset on click below board
+                    resetGame();
                 }
-
-                TicTacToe.this.repaint(); // Pastikan untuk memanggil repaint agar GUI diperbarui
             }
         });
-        this.statusBar = new JLabel();
-        this.statusBar.setFont(FONT_STATUS);
-        this.statusBar.setBackground(COLOR_BG_STATUS);
-        this.statusBar.setOpaque(true);
-        this.statusBar.setPreferredSize(new Dimension(300, 30));
-        this.statusBar.setHorizontalAlignment(2);
-        this.statusBar.setBorder(BorderFactory.createEmptyBorder(5, 10, 5, 12));
-        super.setLayout(new BorderLayout());
-        super.add(this.statusBar, "Last");
-        super.setPreferredSize(new Dimension(960, 990));
-        super.setBorder(BorderFactory.createLineBorder(COLOR_BG_STATUS, 2, false));
-        this.initGame();
-        this.resetGame();
     }
 
-    public void initGame() {
-        this.board = new Board();
-        // Memuat gambar X dan O
-        this.crossImage = new ImageIcon("path_to_cross_image.png").getImage(); // Pastikan path benar
-        this.noughtImage = new ImageIcon("path_to_nought_image.png").getImage(); // Pastikan path benar
+    private void resetGame() {
+        board = new char[GRID_SIZE][GRID_SIZE];
+        xTurn = true;
+        statusMessage = "X's Turn";
+        repaint();
     }
 
-    public void resetGame() {
-        for (int row = 0; row < 3; ++row) {
-            for (int col = 0; col < 3; ++col) {
-                this.board.cells[row][col].content = Seed.NO_SEED;
-            }
+    private boolean checkWin(int row, int col) {
+        char symbol = board[row][col];
+        // Check row
+        if (board[row][0] == symbol && board[row][1] == symbol && board[row][2] == symbol) return true;
+        // Check column
+        if (board[0][col] == symbol && board[1][col] == symbol && board[2][col] == symbol) return true;
+        // Check diagonals
+        if (board[0][0] == symbol && board[1][1] == symbol && board[2][2] == symbol) return true;
+        if (board[0][2] == symbol && board[1][1] == symbol && board[2][0] == symbol) return true;
+        return false;
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        super.paintComponent(g);
+        Graphics2D g2d = (Graphics2D) g;
+
+        // Draw grid
+        g2d.setColor(Color.GRAY);
+        g2d.setStroke(new BasicStroke(5));
+        for (int i = 1; i < GRID_SIZE; i++) {
+            g2d.drawLine(0, i * CELL_SIZE, BOARD_SIZE, i * CELL_SIZE);
+            g2d.drawLine(i * CELL_SIZE, 0, i * CELL_SIZE, BOARD_SIZE);
         }
 
-        this.currentPlayer = Seed.CROSS;
-        this.currentState = State.PLAYING;
-    }
-
-    public void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        this.setBackground(COLOR_BG);
-        this.board.paint(g);
-
-        // Gambar X dan O sesuai dengan posisi mereka
-        for (int row = 0; row < 3; row++) {
-            for (int col = 0; col < 3; col++) {
-                if (board.cells[row][col].content == Seed.CROSS) {
-                    g.drawImage(crossImage, col * 120, row * 120, null); // Gambar X
-                } else if (board.cells[row][col].content == Seed.NOUGHT) {
-                    g.drawImage(noughtImage, col * 120, row * 120, null); // Gambar O
+        // Draw symbols
+        for (int row = 0; row < GRID_SIZE; row++) {
+            for (int col = 0; col < GRID_SIZE; col++) {
+                int x = col * CELL_SIZE + CELL_SIZE / 4;
+                int y = row * CELL_SIZE + CELL_SIZE / 4;
+                if (board[row][col] == 'X') {
+                    g2d.setColor(Color.RED);
+                    g2d.setStroke(new BasicStroke(SYMBOL_STROKE_WIDTH));
+                    g2d.drawLine(col * CELL_SIZE + 20, row * CELL_SIZE + 20, (col + 1) * CELL_SIZE - 20, (row + 1) * CELL_SIZE - 20);
+                    g2d.drawLine((col + 1) * CELL_SIZE - 20, row * CELL_SIZE + 20, col * CELL_SIZE + 20, (row + 1) * CELL_SIZE - 20);
+                } else if (board[row][col] == 'O') {
+                    g2d.setColor(Color.BLUE);
+                    g2d.setStroke(new BasicStroke(SYMBOL_STROKE_WIDTH));
+                    g2d.drawOval(col * CELL_SIZE + 20, row * CELL_SIZE + 20, CELL_SIZE - 40, CELL_SIZE - 40);
                 }
             }
         }
 
-        if (this.currentState == State.PLAYING) {
-            this.statusBar.setForeground(Color.BLACK);
-            this.statusBar.setText(this.currentPlayer == Seed.CROSS ? "X's Turn" : "O's Turn");
-        } else if (this.currentState == State.DRAW) {
-            this.statusBar.setForeground(Color.RED);
-            this.statusBar.setText("It's a Draw! Click to play again.");
-        } else if (this.currentState == State.CROSS_WON) {
-            this.statusBar.setForeground(Color.RED);
-            this.statusBar.setText("'X' Won! Click to play again.");
-        } else if (this.currentState == State.NOUGHT_WON) {
-            this.statusBar.setForeground(Color.RED);
-            this.statusBar.setText("'O' Won! Click to play again.");
-        }
+        // Draw status message
+        g2d.setColor(Color.RED);
+        g2d.setFont(new Font("Arial", Font.BOLD, 18));
+        g2d.drawString(statusMessage, 10, BOARD_SIZE + 30);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> {
-            JFrame frame = new JFrame("Tic Tac Toe");
-            frame.setContentPane(new TicTacToe());
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.pack();
-            frame.setLocationRelativeTo(null);
-            frame.setVisible(true);
-        });
+        JFrame frame = new JFrame("Tic Tac Toe");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.add(new TicTacToe());
+        frame.pack();
+        frame.setVisible(true);
     }
 }
