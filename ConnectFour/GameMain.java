@@ -118,8 +118,9 @@ public class GameMain extends JFrame {
                 } else {
                     currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
                     if (isAIMode && currentPlayer == Seed.NOUGHT) {
-                        int aiMove = aiPlayer.move();
-                        board.makeMove(aiMove, currentPlayer);
+                        int[] aiMove = aiPlayer.move(); // Get [row, col] from AI
+                        int columnToPlay = aiMove[1];  // Extract column
+                        board.makeMove(columnToPlay, currentPlayer);
                         moveAISound.play();
                         if (board.hasWon(currentPlayer)) {
                             currentState = State.NOUGHT_WON;

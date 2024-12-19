@@ -8,7 +8,9 @@ public class Board {
     // Define named constants
     public static final int ROWS = 6;   // 6 baris untuk Connect4
     public static final int COLS = 7;   // 7 kolom untuk Connect4
-    public Cell[][] cells;             // Papan permainan
+    public Cell[][] cells;// Papan permainan
+    private Seed[][] board;
+
 
     // Define named constants for drawing
     public static final int CANVAS_WIDTH = Cell.SIZE * COLS;  // the drawing canvas
@@ -26,6 +28,31 @@ public class Board {
     public Board() {
         initGame();
     }
+
+    public boolean isValidMove(int col) {
+        return col >= 0 && col < COLS && board[0][col] == Seed.NO_SEED;
+    }
+
+    public void init() {
+        initGame();
+    }
+
+
+    public void makeMove(int col, Seed seed) {
+        for (int row = ROWS - 1; row >= 0; row--) {
+            if (board[row][col] == Seed.NO_SEED) {
+                board[row][col] = seed;
+                break;
+            }
+        }
+    }
+
+    public boolean hasWon(Seed seed) {
+        // Check for 4-in-a-row logic here (horizontal, vertical, diagonal)
+        // Simplified example: return false for now
+        return false;
+    }
+
 
     /** Initialize the game objects (run once) */
     public void initGame() {
@@ -117,6 +144,9 @@ public class Board {
     }
 
 
+    public int getColFromX(int x) {
+        return x / (800 / COLS); // Assuming board width is 800px
+    }
 
 
     /** Paint itself on the graphics canvas, given the Graphics context */
