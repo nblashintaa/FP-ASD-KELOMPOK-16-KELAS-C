@@ -16,6 +16,9 @@ public class TicTacToe extends JPanel {
     private boolean xTurn = true;
     private String statusMessage = "X's Turn";
 
+    // Variable for game level
+    private static String gameLevel = "Easy"; // Default level
+
     public TicTacToe() {
         this.setPreferredSize(new Dimension(BOARD_SIZE, BOARD_SIZE + 50));
         this.addMouseListener(new MouseAdapter() {
@@ -97,10 +100,39 @@ public class TicTacToe extends JPanel {
     }
 
     public static void main(String[] args) {
+        // Show welcome message and game level selection
+        showWelcomeMessage();
+
+        // Create the game frame
         JFrame frame = new JFrame("Tic Tac Toe");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.add(new TicTacToe());
         frame.pack();
         frame.setVisible(true);
+    }
+
+    /**
+     * Displays a welcome message and asks the user to select a game level.
+     */
+    private static void showWelcomeMessage() {
+        // Welcome popup
+        JOptionPane.showMessageDialog(null, "Welcome to Tic Tac Toe!", "Welcome", JOptionPane.INFORMATION_MESSAGE);
+
+        // Level selection
+        String[] levels = {"Easy", "Medium", "Hard"};
+        gameLevel = (String) JOptionPane.showInputDialog(
+                null,
+                "Select your game level:",
+                "Game Level",
+                JOptionPane.QUESTION_MESSAGE,
+                null,
+                levels,
+                levels[0]
+        );
+
+        // If no level is selected, set a default
+        if (gameLevel == null) {
+            gameLevel = "Easy";
+        }
     }
 }
