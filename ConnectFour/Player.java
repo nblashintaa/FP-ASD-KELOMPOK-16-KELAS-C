@@ -1,4 +1,4 @@
-package TicTacToe;
+package ConnectFour;
 
 public class Player {
     private String name;
