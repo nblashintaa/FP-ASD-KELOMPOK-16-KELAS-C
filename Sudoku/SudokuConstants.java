@@ -1,4 +1,4 @@
-package Resource.src.Sudoku;
+package Sudoku;
 /**
  * Define the named constants used in many classes.
  */

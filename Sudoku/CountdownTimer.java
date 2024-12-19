@@ -1,4 +1,4 @@
-package Resource.src.Sudoku;
+package Sudoku;
 
 import javax.swing.*;
 import java.awt.event.ActionEvent;

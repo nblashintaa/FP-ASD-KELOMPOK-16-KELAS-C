@@ -1,4 +1,4 @@
-package Resource.src.Sudoku;
+package Sudoku;
 
 import java.awt.Color;
 import java.awt.Font;
