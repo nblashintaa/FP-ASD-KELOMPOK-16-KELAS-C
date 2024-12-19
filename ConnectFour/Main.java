@@ -17,7 +17,7 @@ public class Main {
         Board gameBoard = new Board();
 
         // Create a new ConnectFour game instance with the human player, AI player, and the board
-        ConnectFour game = new ConnectFour(humanName, aiName, gameBoard);
+        ConnectFour game = new ConnectFour(humanName, aiName);
 
         // Start the game
         game.playGame();
