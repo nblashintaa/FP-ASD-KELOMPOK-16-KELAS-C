@@ -1,5 +1,6 @@
 package ConnectFour;
 
+import javax.swing.JOptionPane;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -17,14 +18,25 @@ public class ConnectFour {
     private Player aiPlayer;
 
     // Constructor
+    public ConnectFour() {
+        this.board = new int[ROWS][COLS];
+    }
+
     public ConnectFour(String humanName, String aiName) {
         this.board = new int[ROWS][COLS];
         this.humanPlayer = new Player(humanName);
         this.aiPlayer = new Player(aiName);
     }
 
+    public int[][] getBoard() {
+        return board;
+    }
+
     // Method to play the game
-    public void playGame() {
+    public void playGame(String humanName, String aiName) {
+        this.humanPlayer = new Player(humanName);
+        this.aiPlayer = new Player(aiName);
+
         boolean isAITurn = false;
 
         while (true) {
@@ -74,16 +86,16 @@ public class ConnectFour {
         System.out.println();
     }
 
-    private boolean isDraw() {
+    public boolean isDraw() {
         for (int col = 0; col < COLS; col++) {
-            if (board[0][col] == EMPTY) {
+            if (getBoard()[0][col] == EMPTY) {
                 return false;
             }
         }
         return true;
     }
 
-    private void makeMove(int col, int player) {
+    public void makeMove(int col, int player) {
         for (int row = ROWS - 1; row >= 0; row--) {
             if (board[row][col] == EMPTY) {
                 board[row][col] = player;
@@ -92,7 +104,7 @@ public class ConnectFour {
         }
     }
 
-    private boolean isValidMove(int col) {
+    public boolean isValidMove(int col) {
         return col >= 0 && col < COLS && board[0][col] == EMPTY;
     }
 
@@ -163,7 +175,8 @@ public class ConnectFour {
         }
     }
 
-    private boolean isWinningMove(int[][] board, int player) {
+    public boolean isWinningMove(int[][] board, int player) {
+        // Check horizontal
         for (int row = 0; row < ROWS; row++) {
             for (int col = 0; col < COLS - 3; col++) {
                 if (board[row][col] == player &&
@@ -175,6 +188,7 @@ public class ConnectFour {
             }
         }
 
+        // Check vertical
         for (int row = 0; row < ROWS - 3; row++) {
             for (int col = 0; col < COLS; col++) {
                 if (board[row][col] == player &&
@@ -186,6 +200,7 @@ public class ConnectFour {
             }
         }
 
+        // Check diagonal (positive slope)
         for (int row = 0; row < ROWS - 3; row++) {
             for (int col = 0; col < COLS - 3; col++) {
                 if (board[row][col] == player &&
@@ -197,6 +212,7 @@ public class ConnectFour {
             }
         }
 
+        // Check diagonal (negative slope)
         for (int row = 3; row < ROWS; row++) {
             for (int col = 0; col < COLS - 3; col++) {
                 if (board[row][col] == player &&
@@ -281,20 +297,25 @@ public class ConnectFour {
         else if (countPlayer == 3 && countEmpty == 1) score += 5;
         else if (countPlayer == 2 && countEmpty == 2) score += 2;
 
-        if (countOpponent == 3 && countEmpty == 1) score -= 4;
+        if (countOpponent == 4) score -= 100;
+        else if (countOpponent == 3 && countEmpty == 1) score -= 4;
+        else if (countOpponent == 2 && countEmpty == 2) score -= 1;
 
         return score;
     }
 
     public static void main(String[] args) {
-        Scanner scanner = new Scanner(System.in);
-        System.out.print("Enter human player name: ");
-        String humanName = scanner.nextLine();
-        System.out.print("Enter AI player name: ");
-        String aiName = scanner.nextLine();
+        JOptionPane.showMessageDialog(null, "Welcome to Connect Four Game!\nChoose your difficulty level:");
+
+        // Difficulty selection
+        String[] difficultyLevels = {"Easy", "Medium", "Hard"};
+        String selectedDifficulty = (String) JOptionPane.showInputDialog(null, "Select Difficulty",
+                "Difficulty Level", JOptionPane.QUESTION_MESSAGE, null, difficultyLevels, difficultyLevels[1]);
+
+        String humanName = JOptionPane.showInputDialog("Enter your name:");
+        String aiName = "AI Player"; // AI is controlled by the system
 
         ConnectFour game = new ConnectFour(humanName, aiName);
-        game.playGame();
+        game.playGame(humanName, aiName);
     }
 }
-

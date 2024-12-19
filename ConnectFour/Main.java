@@ -20,6 +20,6 @@ public class Main {
         ConnectFour game = new ConnectFour(humanName, aiName);
 
         // Start the game
-        game.playGame();
+        //game.playGame();
     }
 }

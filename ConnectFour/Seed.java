@@ -1,9 +1,9 @@
 package ConnectFour;
 
-
 import java.awt.Image;
 import java.net.URL;
 import javax.swing.ImageIcon;
+
 /**
  * This enum is used by:
  * 1. Player: takes value of CROSS or NOUGHT
@@ -20,7 +20,11 @@ import javax.swing.ImageIcon;
 public enum Seed {   // to save as "Seed.java"
     CROSS("X", "connectFour/pixelart-8914_256.gif"),   // displayName, imageFilename
     NOUGHT("O", "connectFour/sepeda.gif"),
-    NO_SEED(" ", null);
+    NO_SEED(" ", null),
+    PLAYER1("P1", "connectFour/player1.gif"),         // for Tic-Tac-Toe PLAYER1
+    PLAYER2("P2", "connectFour/player2.gif"),         // for Tic-Tac-Toe PLAYER2
+    EMPTY(" ", null),                                 // for Tic-Tac-Toe EMPTY cell
+    WIN("W", "connectFour/win.gif");                  // for indicating a winning cell
 
     // Private variables
     private String displayName;
@@ -39,7 +43,7 @@ public enum Seed {   // to save as "Seed.java"
             } else {
                 System.err.println("Couldn't find file " + imageFilename);
             }
-            img = icon.getImage();
+            img = icon != null ? icon.getImage() : null;
         }
     }
 
