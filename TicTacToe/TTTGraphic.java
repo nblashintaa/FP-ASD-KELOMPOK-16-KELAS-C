@@ -5,26 +5,28 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /** Tic-Tac-Toe game with AI */
-public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, bukan JFrame
+public class TTTGraphic extends JPanel {
 
     private static final int SIZE = 3; // Board size
     private static final int CELL_SIZE = 100; // Cell size in pixels
     private static final int WIDTH = SIZE * CELL_SIZE; // Window width
-    private static final int HEIGHT = SIZE * CELL_SIZE; // Window height
+    private static final int HEIGHT = SIZE * CELL_SIZE + 30; // Window height (extra for status)
+    private static final int STATUS_HEIGHT = 30; // Height for status bar
 
-    private Board board; // Logical board
+    private final Board board; // Logical board
     private Seed currentPlayer;
     private State currentState;
-    private boolean isAIPlayerTurn;
-    private AIPlayerMinimax aiPlayer;
+    private final boolean isAIPlayerTurn;
+    private final AIPlayerMinimax aiPlayer;
 
-    private JPanel gamePanel;
-    private JPanel controlPanel;
-    private JButton resetButton;
+    private final JPanel gamePanel;
+    private final JPanel controlPanel;
+    private final JButton resetButton;
+    private final JLabel statusLabel; // Status label for messages
 
     public TTTGraphic() {
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));  // Menetapkan ukuran panel permainan
-        setLayout(new BorderLayout()); // Gunakan BorderLayout untuk menempatkan kontrol dan game panel
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setLayout(new BorderLayout());
 
         // Initialize game
         board = new Board();
@@ -44,7 +46,7 @@ public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, buk
                 drawBoard(g);
             }
         };
-        gamePanel.setPreferredSize(new Dimension(WIDTH, HEIGHT));  // Panel permainan dengan ukuran tetap
+        gamePanel.setPreferredSize(new Dimension(WIDTH, HEIGHT - STATUS_HEIGHT));
         gamePanel.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -58,6 +60,7 @@ public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, buk
                             && board.cells[row][col].content == Seed.NO_SEED) {
                         currentState = board.stepGame(currentPlayer, row, col);
                         currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
+                        updateStatus();
                         gamePanel.repaint();
 
                         // Trigger AI move
@@ -73,15 +76,24 @@ public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, buk
 
         // Setup control panel
         controlPanel = new JPanel();
-        controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER));  // Gunakan FlowLayout untuk kontrol panel
+        controlPanel.setLayout(new FlowLayout(FlowLayout.CENTER));
         resetButton = new JButton("Reset Game");
         resetButton.addActionListener(e -> newGame());
         controlPanel.add(new JLabel("Tic Tac Toe"));
         controlPanel.add(resetButton);
 
-        // Add panels to this JPanel ( bukan JFrame )
-        add(gamePanel, BorderLayout.CENTER);   // Panel permainan di tengah
-        add(controlPanel, BorderLayout.NORTH); // Panel kontrol di atas
+        // Setup status label
+        statusLabel = new JLabel("Player X's Turn");
+        statusLabel.setHorizontalAlignment(SwingConstants.CENTER);
+        statusLabel.setFont(new Font("Arial", Font.BOLD, 14));
+        statusLabel.setOpaque(true);
+        statusLabel.setBackground(Color.LIGHT_GRAY);
+        statusLabel.setPreferredSize(new Dimension(WIDTH, STATUS_HEIGHT));
+
+        // Add panels to this JPanel
+        add(gamePanel, BorderLayout.CENTER);
+        add(controlPanel, BorderLayout.NORTH);
+        add(statusLabel, BorderLayout.SOUTH);
     }
 
     private void aiMove() {
@@ -90,6 +102,7 @@ public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, buk
             if (move != null) {
                 currentState = board.stepGame(Seed.NOUGHT, move[0], move[1]);
                 currentPlayer = Seed.CROSS;
+                updateStatus();
                 gamePanel.repaint();
             }
         }
@@ -99,18 +112,19 @@ public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, buk
         board.newGame();
         currentPlayer = Seed.CROSS;
         currentState = State.PLAYING;
+        updateStatus();
         gamePanel.repaint();
     }
 
     private void drawBoard(Graphics g) {
         Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        g2d.setStroke(new BasicStroke(3));
+        g2d.setStroke(new BasicStroke(5)); // Thicker lines for grid
 
         // Draw grid
-        g2d.setColor(Color.BLACK);
+        g2d.setColor(Color.GRAY);
         for (int i = 1; i < SIZE; i++) {
-            g2d.drawLine(i * CELL_SIZE, 0, i * CELL_SIZE, HEIGHT);
+            g2d.drawLine(i * CELL_SIZE, 0, i * CELL_SIZE, HEIGHT - STATUS_HEIGHT);
             g2d.drawLine(0, i * CELL_SIZE, WIDTH, i * CELL_SIZE);
         }
 
@@ -132,28 +146,25 @@ public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, buk
                 }
             }
         }
+    }
 
-        // Display game state
-        g2d.setColor(Color.BLACK);
-        g2d.setFont(new Font("Arial", Font.BOLD, 18));
-        if (currentState == State.CROSS_WON) {
-            showGameOverMessage("Player X Wins!");
+    private void updateStatus() {
+        if (currentState == State.PLAYING) {
+            statusLabel.setText(currentPlayer == Seed.CROSS ? "Player X's Turn" : "Player O's Turn");
+        } else if (currentState == State.CROSS_WON) {
+            statusLabel.setText("Player X Wins! Click to play again.");
         } else if (currentState == State.NOUGHT_WON) {
-            showGameOverMessage("Player O Wins!");
+            statusLabel.setText("Player O Wins! Click to play again.");
         } else if (currentState == State.DRAW) {
-            showGameOverMessage("It's a Draw!");
+            statusLabel.setText("It's a Draw! Click to play again.");
         }
     }
 
-    private void showGameOverMessage(String message) {
-        // Tampilkan pesan game over terlebih dahulu
-        JOptionPane.showMessageDialog(this, message, "Game Over", JOptionPane.INFORMATION_MESSAGE);
-
-        // Setelah pesan ditutup, mulai permainan baru
-        newGame();
-    }
-
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new TTTGraphic().setVisible(true));
+        JFrame frame = new JFrame("Tic Tac Toe");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setContentPane(new TTTGraphic());
+        frame.pack();
+        frame.setVisible(true);
     }
 }
