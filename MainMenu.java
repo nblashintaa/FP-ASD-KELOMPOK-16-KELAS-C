@@ -1,5 +1,5 @@
 import Sudoku.Sudoku;
-import TicTacToe.TicTacToe;
+import TicTacToe.TTTGraphic;
 
 import javax.swing.*;
 import java.awt.*;
@@ -54,7 +54,7 @@ public class MainMenu extends JFrame {
         btnTicTacToe.addActionListener(e -> {
             JFrame frame = new JFrame("Tic Tac Toe");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new TicTacToe()); // Menambahkan TicTacToe JPanel ke JFrame
+            frame.setContentPane(new TTTGraphic()); // Menambahkan TicTacToe JPanel ke JFrame
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
