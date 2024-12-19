@@ -1,48 +1,26 @@
 package TicTacToe;
+/**
+ * This enum is used by:
+ * 1. Player: takes value of CROSS or NOUGHT
+ * 2. Cell content: takes value of CROSS, NOUGHT, or NO_SEED.
+ *
+ * We also attach a display icon (text or image) for each of the item,
+ *   and define the related variable/constructor/getter.
+ *
+ * Ideally, we should define two enums with inheritance, which is,
+ *  however, not supported.
+ */
+public enum Seed {   // to save as "Seed.java"
+    CROSS("X"), NOUGHT("O"), NO_SEED(" ");
 
-import java.awt.Image;
-import java.net.URL;
-import javax.swing.ImageIcon;
-
-public enum Seed {
-    CROSS("X", "cat.png"),
-    NOUGHT("O", "mouse.jpeg"),
-    NO_SEED(" ", null);
-
-    private String displayName;
-    private String icon;  // This will store the filename or image path
-    private Image img = null;
-
-    // Constructor to initialize the name and icon for each seed type
-    Seed(String name, String imageFilename) {
-        this.displayName = name;
-        this.icon = imageFilename;  // Set 'icon' to the image filename
-
-        // If imageFilename is not null, try to load the image
-        if (imageFilename != null) {
-            // Use the class loader to get the image resource
-            URL imgURL = this.getClass().getClassLoader().getResource(imageFilename);
-            if (imgURL != null) {
-                // If the image is found, load it into the ImageIcon and then get the image
-                ImageIcon icon = new ImageIcon(imgURL);
-                this.img = icon.getImage();
-            } else {
-                System.err.println("Couldn't find file " + imageFilename);
-                // Handle missing image gracefully (assign a default or null)
-                this.img = new ImageIcon(this.getClass().getClassLoader().getResource("placeholder.png")).getImage();
-            }
-        }
+    // Private variable
+    private String icon;
+    // Constructor (must be private)
+    private Seed(String icon) {
+        this.icon = icon;
     }
-
-    public String getDisplayName() {
-        return this.displayName;
-    }
-
-    public Image getImage() {
-        return this.img;
-    }
-
+    // Public Getter
     public String getIcon() {
-        return this.icon;
+        return icon;
     }
 }

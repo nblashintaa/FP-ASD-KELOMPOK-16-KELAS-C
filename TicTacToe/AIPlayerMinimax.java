@@ -1,8 +1,11 @@
 package TicTacToe;
 
 import java.util.*;
+
 /** AIPlayer using Minimax algorithm */
 public class AIPlayerMinimax extends AIPlayer {
+
+    private int depth = 2;  // Default depth
 
     /** Constructor with the given game board */
     public AIPlayerMinimax(Board board) {
@@ -12,8 +15,13 @@ public class AIPlayerMinimax extends AIPlayer {
     /** Get next best move for computer. Return int[2] of {row, col} */
     @Override
     int[] move() {
-        int[] result = minimax(2, mySeed); // depth, max turn
+        int[] result = minimax(depth, mySeed); // depth, max turn
         return new int[] {result[1], result[2]};   // row, col
+    }
+
+    /** Set depth for the Minimax algorithm */
+    public void setDepth(int depth) {
+        this.depth = depth;
     }
 
     /** Recursive minimax at level of depth for either maximizing or minimizing player.
@@ -150,25 +158,15 @@ public class AIPlayerMinimax extends AIPlayer {
         return score;
     }
 
-    private int[] winningPatterns = {
-            0b111000000, 0b000111000, 0b000000111, // rows
-            0b100100100, 0b010010010, 0b001001001, // cols
-            0b100010001, 0b001010100               // diagonals
-    };
-
-    /** Returns true if thePlayer wins */
-    private boolean hasWon(Seed thePlayer) {
-        int pattern = 0b000000000;  // 9-bit pattern for the 9 cells
-        for (int row = 0; row < ROWS; ++row) {
-            for (int col = 0; col < COLS; ++col) {
-                if (cells[row][col].content == thePlayer) {
-                    pattern |= (1 << (row * COLS + col));
-                }
-            }
-        }
-        for (int winningPattern : winningPatterns) {
-            if ((pattern & winningPattern) == winningPattern) return true;
-        }
-        return false;
+    /** Return true if a player has 3-in-a-line */
+    private boolean hasWon(Seed seed) {
+        return (cells[0][0].content == seed && cells[0][1].content == seed && cells[0][2].content == seed) ||
+                (cells[1][0].content == seed && cells[1][1].content == seed && cells[1][2].content == seed) ||
+                (cells[2][0].content == seed && cells[2][1].content == seed && cells[2][2].content == seed) ||
+                (cells[0][0].content == seed && cells[1][0].content == seed && cells[2][0].content == seed) ||
+                (cells[0][1].content == seed && cells[1][1].content == seed && cells[2][1].content == seed) ||
+                (cells[0][2].content == seed && cells[1][2].content == seed && cells[2][2].content == seed) ||
+                (cells[0][0].content == seed && cells[1][1].content == seed && cells[2][2].content == seed) ||
+                (cells[0][2].content == seed && cells[1][1].content == seed && cells[2][0].content == seed);
     }
 }
