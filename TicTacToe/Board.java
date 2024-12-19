@@ -85,5 +85,21 @@ public class Board {
                 cells[row][col].paint(g, col * 120, row * 120, 120); // Pass size as 120
             }
         }
+
+        // Gambar simbol X dan O
+        for (int row = 0; row < ROWS; row++) {
+            for (int col = 0; col < COLS; col++) {
+                int x = col * 120;
+                int y = row * 120;
+                if (cells[row][col].content == Seed.CROSS) {
+                    g.setColor(Color.RED);
+                    g.drawLine(x + 20, y + 20, x + 100, y + 100);  // Garis 1
+                    g.drawLine(x + 100, y + 20, x + 20, y + 100);  // Garis 2
+                } else if (cells[row][col].content == Seed.NOUGHT) {
+                    g.setColor(Color.BLUE);
+                    g.drawOval(x + 20, y + 20, 80, 80);  // Lingkaran
+                }
+            }
+        }
     }
 }
