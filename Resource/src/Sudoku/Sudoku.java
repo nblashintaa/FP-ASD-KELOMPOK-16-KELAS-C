@@ -1,8 +1,7 @@
-package Sudoku;
+package Resource.src.Sudoku;
 
 import java.awt.*;
 import javax.swing.*;
-import java.awt.event.ActionEvent;
 
 public class Sudoku extends JFrame {
     private static final long serialVersionUID = 1L;

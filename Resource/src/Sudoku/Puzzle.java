@@ -1,4 +1,4 @@
-package Sudoku;
+package Resource.src.Sudoku;
 /**
  * The Sudoku number puzzle to be solved
  */

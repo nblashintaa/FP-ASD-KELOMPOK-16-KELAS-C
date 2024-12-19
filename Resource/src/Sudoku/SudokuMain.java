@@ -8,7 +8,7 @@
  * 3 - 5026231139 - Amandea Chandiki Larasati
  */
 
-package Sudoku;
+package Resource.src.Sudoku;
 public class SudokuMain {
     public static void main(String[] args) throws Exception {
         System.out.println("Sudoku");

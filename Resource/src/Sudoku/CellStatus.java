@@ -1,4 +1,4 @@
-package Sudoku;
+package Resource.src.Sudoku;
 /**
  * An enumeration of constants to represent the status
  * of each cell.

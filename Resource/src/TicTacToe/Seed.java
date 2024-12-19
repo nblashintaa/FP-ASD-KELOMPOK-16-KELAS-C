@@ -1,4 +1,4 @@
-package TicTacToe;
+package Resource.src.TicTacToe;
 
 import java.awt.Image;
 import java.net.URL;

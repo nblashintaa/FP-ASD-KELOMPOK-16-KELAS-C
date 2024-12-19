@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package TicTacToe;
+package Resource.src.TicTacToe;
 
 import java.awt.BorderLayout;
 import java.awt.Color;

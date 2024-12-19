@@ -1,5 +1,7 @@
-import Sudoku.Sudoku;
-import TicTacToe.GameMain;
+package Resource.src;
+
+import Resource.src.Sudoku.Sudoku;
+import Resource.src.TicTacToe.GameMain;
 
 import javax.swing.*;
 import java.awt.*;
