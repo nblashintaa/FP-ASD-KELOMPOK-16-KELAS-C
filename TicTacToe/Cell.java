@@ -1,7 +1,12 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package TicTacToe;
 
-
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics;
 import java.awt.image.ImageObserver;
 
 public class Cell {
