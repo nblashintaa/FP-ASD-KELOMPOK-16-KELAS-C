@@ -1,29 +1,36 @@
 package TicTacToe;
 
-//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+import javax.swing.*;
+import java.awt.*;
+
 public class Main {
     public static void main(String[] args) {
-        //TIP Press <shortcut actionId="ShowIntentionActions"/> with your caret at the highlighted text
-        // to see how IntelliJ IDEA suggests fixing it.
-        System.out.println("Playing Tic Tac Toe");
+        // Pastikan game dijalankan di thread GUI yang tepat
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("Playing Tic Tac Toe");
 
-        // Initialize the sound effect with the sound file name
-        // Replace "your_sound_file.wav" with the actual path to your sound file
-        SoundTicTacToe soundEffect = new SoundTicTacToe("SoundEffect.wav");
+            // Membuat frame untuk aplikasi Tic Tac Toe
+            JFrame frame = new JFrame("Tic Tac Toe");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            TicTacToe gamePanel = new TicTacToe(); // Panel permainan TicTacToe
+            frame.setContentPane(gamePanel); // Set panel TicTacToe sebagai konten frame
+            frame.pack(); // Menyesuaikan ukuran frame
+            frame.setLocationRelativeTo(null); // Menempatkan frame di tengah layar
+            frame.setVisible(true); // Menampilkan frame
 
-        // Play the sound (loop continuously)
-        soundEffect.play();
+            // Inisialisasi dan putar efek suara
+            SoundTicTacToe soundEffect = new SoundTicTacToe("SoundEffect.wav");
+            soundEffect.play(); // Mainkan suara
 
-        // Simulate the game running (you can replace this with actual game logic)
-        try {
-            Thread.sleep(5000); // Play sound for 5 seconds
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+            // Simulasikan game selama 5 detik
+            try {
+                Thread.sleep(5000); // Simulasikan game selama 5 detik
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
 
-        // Stop the sound after 5 seconds
-        soundEffect.stop();
+            // Hentikan suara setelah 5 detik
+            soundEffect.stop();
+        });
     }
 }
-

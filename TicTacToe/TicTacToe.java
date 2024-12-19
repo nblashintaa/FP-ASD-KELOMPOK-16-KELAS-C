@@ -1,36 +1,26 @@
-//
-// Source code recreated from a .class file by IntelliJ IDEA
-// (powered by FernFlower decompiler)
-//
-
 package TicTacToe;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Component;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.Graphics;
+import java.awt.*;
+import javax.swing.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import javax.swing.BorderFactory;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.SwingUtilities;
 
 public class TicTacToe extends JPanel {
     private static final long serialVersionUID = 1L;
     public static final String TITLE = "Tic Tac Toe";
-    public static final Color COLOR_BG;
-    public static final Color COLOR_BG_STATUS;
-    public static final Color COLOR_CROSS;
-    public static final Color COLOR_NOUGHT;
-    public static final Font FONT_STATUS;
+    public static final Color COLOR_BG = Color.WHITE;
+    public static final Color COLOR_BG_STATUS = new Color(216, 216, 216);
+    public static final Color COLOR_CROSS = new Color(239, 105, 80);
+    public static final Color COLOR_NOUGHT = new Color(64, 154, 225);
+    public static final Font FONT_STATUS = new Font("OCR A Extended", 0, 14);
     private Board board;
     private State currentState;
     private Seed currentPlayer;
     private JLabel statusBar;
+
+    // Gambar X dan O
+    private Image crossImage;
+    private Image noughtImage;
 
     public TicTacToe() {
         super.addMouseListener(new MouseAdapter() {
@@ -40,7 +30,7 @@ public class TicTacToe extends JPanel {
                 int row = mouseY / 120;
                 int col = mouseX / 120;
                 if (TicTacToe.this.currentState == State.PLAYING) {
-                    if (row >= 0 && row < 8 && col >= 0 && col < 8 && TicTacToe.this.board.cells[row][col].content == Seed.NO_SEED) {
+                    if (row >= 0 && row < 3 && col >= 0 && col < 3 && TicTacToe.this.board.cells[row][col].content == Seed.NO_SEED) {
                         TicTacToe.this.currentState = TicTacToe.this.board.stepGame(TicTacToe.this.currentPlayer, row, col);
                         TicTacToe.this.currentPlayer = TicTacToe.this.currentPlayer == Seed.CROSS ? Seed.NOUGHT : Seed.CROSS;
                     }
@@ -48,7 +38,7 @@ public class TicTacToe extends JPanel {
                     TicTacToe.this.resetGame();
                 }
 
-                TicTacToe.this.repaint();
+                TicTacToe.this.repaint(); // Pastikan untuk memanggil repaint agar GUI diperbarui
             }
         });
         this.statusBar = new JLabel();
@@ -68,11 +58,14 @@ public class TicTacToe extends JPanel {
 
     public void initGame() {
         this.board = new Board();
+        // Memuat gambar X dan O
+        this.crossImage = new ImageIcon("path_to_cross_image.png").getImage(); // Pastikan path benar
+        this.noughtImage = new ImageIcon("path_to_nought_image.png").getImage(); // Pastikan path benar
     }
 
     public void resetGame() {
-        for(int row = 0; row < 8; ++row) {
-            for(int col = 0; col < 8; ++col) {
+        for (int row = 0; row < 3; ++row) {
+            for (int col = 0; col < 3; ++col) {
                 this.board.cells[row][col].content = Seed.NO_SEED;
             }
         }
@@ -85,6 +78,18 @@ public class TicTacToe extends JPanel {
         super.paintComponent(g);
         this.setBackground(COLOR_BG);
         this.board.paint(g);
+
+        // Gambar X dan O sesuai dengan posisi mereka
+        for (int row = 0; row < 3; row++) {
+            for (int col = 0; col < 3; col++) {
+                if (board.cells[row][col].content == Seed.CROSS) {
+                    g.drawImage(crossImage, col * 120, row * 120, null); // Gambar X
+                } else if (board.cells[row][col].content == Seed.NOUGHT) {
+                    g.drawImage(noughtImage, col * 120, row * 120, null); // Gambar O
+                }
+            }
+        }
+
         if (this.currentState == State.PLAYING) {
             this.statusBar.setForeground(Color.BLACK);
             this.statusBar.setText(this.currentPlayer == Seed.CROSS ? "X's Turn" : "O's Turn");
@@ -98,38 +103,16 @@ public class TicTacToe extends JPanel {
             this.statusBar.setForeground(Color.RED);
             this.statusBar.setText("'O' Won! Click to play again.");
         }
-
     }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
             JFrame frame = new JFrame("Tic Tac Toe");
             frame.setContentPane(new TicTacToe());
-            frame.setDefaultCloseOperation(3);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.pack();
-            frame.setLocationRelativeTo((Component)null);
+            frame.setLocationRelativeTo(null);
             frame.setVisible(true);
         });
-    }
-
-    public void play() {
-        SwingUtilities.invokeLater(new Runnable() {
-            public void run() {
-                JFrame frame = new JFrame("Tic Tac Toe");
-                frame.setContentPane(new TicTacToe());
-                frame.setDefaultCloseOperation(3);
-                frame.pack();
-                frame.setLocationRelativeTo((Component)null);
-                frame.setVisible(true);
-            }
-        });
-    }
-
-    static {
-        COLOR_BG = Color.WHITE;
-        COLOR_BG_STATUS = new Color(216, 216, 216);
-        COLOR_CROSS = new Color(239, 105, 80);
-        COLOR_NOUGHT = new Color(64, 154, 225);
-        FONT_STATUS = new Font("OCR A Extended", 0, 14);
     }
 }
