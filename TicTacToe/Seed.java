@@ -10,10 +10,13 @@ public enum Seed {
     NO_SEED(" ", null);
 
     private String displayName;
+    private String icon;  // Declare 'icon' here
     private Image img = null;
 
-    private Seed(String name, String imageFilename) {
+    // Constructor to initialize the name and icon for each seed type
+    Seed(String name, String imageFilename) {
         this.displayName = name;
+        this.icon = name;  // Set 'icon' equal to 'name'
         if (imageFilename != null) {
             URL imgURL = this.getClass().getClassLoader().getResource(imageFilename);
             ImageIcon icon = null;
@@ -34,5 +37,9 @@ public enum Seed {
 
     public Image getImage() {
         return this.img;
+    }
+
+    public String getIcon() {
+        return this.icon;
     }
 }
