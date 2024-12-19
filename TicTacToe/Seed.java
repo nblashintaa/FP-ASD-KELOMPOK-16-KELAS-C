@@ -10,8 +10,8 @@ import java.net.URL;
 import javax.swing.ImageIcon;
 
 public enum Seed {
-    CROSS("X", "cat.gif"),
-    NOUGHT("O", "mouse.gif"),
+    CROSS("X", "cat.gif.gif"),
+    NOUGHT("O", "mouse.gif.gif"),
     NO_SEED(" ", (String)null);
 
     private String displayName;
