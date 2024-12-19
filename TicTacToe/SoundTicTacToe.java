@@ -1,14 +1,19 @@
-package Resource.src.Sudoku;
+package TicTacToe;
+
 import javax.sound.sampled.*;
 import java.io.InputStream;
 
-public class SoundEffect {
+public class SoundTicTacToe {
     private Clip clip;
 
-    public SoundEffect(String soundFileName) {
+    // Constructor to load the sound from a file
+    public SoundTicTacToe(String soundFileName) {
         try {
             // Use getResourceAsStream to load files inside the src folder
             InputStream audioSrc = getClass().getClassLoader().getResourceAsStream(soundFileName);
+            if (audioSrc == null) {
+                throw new Exception("Sound file not found: " + soundFileName);
+            }
             AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audioSrc);
             clip = AudioSystem.getClip();
             clip.open(audioInputStream);
@@ -17,14 +22,22 @@ public class SoundEffect {
         }
     }
 
-    // Metode untuk memulai audio secara loop
+    // Method to start audio looping
     public void play() {
         if (clip != null) {
             clip.loop(Clip.LOOP_CONTINUOUSLY);
         }
     }
 
-    // Metode untuk menghentikan audio
+    // Method to play audio once
+    public void playOnce() {
+        if (clip != null) {
+            clip.setFramePosition(0); // Reset the clip to start
+            clip.start(); // Play the sound once
+        }
+    }
+
+    // Method to stop audio
     public void stop() {
         if (clip != null) {
             clip.stop();

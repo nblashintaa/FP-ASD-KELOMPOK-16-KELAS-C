@@ -3,7 +3,7 @@
 // (powered by FernFlower decompiler)
 //
 
-package Resource.src.TicTacToe;
+package TicTacToe;
 
 public enum State {
     PLAYING,

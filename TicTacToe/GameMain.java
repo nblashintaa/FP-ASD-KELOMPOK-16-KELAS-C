@@ -1,4 +1,4 @@
-package Resource.src.TicTacToe;
+package TicTacToe;
 
 import java.util.Scanner;
 
