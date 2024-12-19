@@ -8,6 +8,9 @@ public class Puzzle {
     int[][] numbers = new int[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
     // The clues - isGiven (no need to guess) or need to guess
     boolean[][] isGiven = new boolean[SudokuConstants.GRID_SIZE][SudokuConstants.GRID_SIZE];
+    public boolean hasConflictAt(int row, int col) {
+        return false;
+    }
 
     // Constructor
     public Puzzle() {
