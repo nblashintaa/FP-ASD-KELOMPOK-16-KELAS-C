@@ -1,5 +1,6 @@
 import Sudoku.Sudoku;
 import TicTacToe.TTTGraphic;
+import ConnectFour.TTTGraphics; // Memastikan package ConnectFour ada dan bisa digunakan
 
 import javax.swing.*;
 import java.awt.*;
@@ -15,31 +16,31 @@ public class MainMenu extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Container for layout
+        // Container untuk layout
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
-        // Title Label
+        // Label Title
         JLabel titleLabel = new JLabel("Choose Your Game", JLabel.CENTER);
         titleLabel.setFont(new Font("Calibre", Font.BOLD, 18));
         cp.add(titleLabel, BorderLayout.NORTH);
 
-        // Panel with buttons for each game
+        // Panel dengan tombol untuk setiap game
         JPanel gamePanel = new JPanel();
-        gamePanel.setLayout(new GridLayout(3, 1, 10, 10)); // 3x1 grid for games
+        gamePanel.setLayout(new GridLayout(3, 1, 10, 10)); // Grid 3x1 untuk game
 
-        // Buttons for each game
+        // Tombol untuk setiap game
         JButton btnSudoku = new JButton("Sudoku");
         JButton btnTicTacToe = new JButton("Tic Tac Toe");
-        JButton btnOthello = new JButton("Othello");
+        JButton btnConnectFour = new JButton("Connect Four"); // Mengganti Othello dengan Connect Four
 
         gamePanel.add(btnSudoku);
         gamePanel.add(btnTicTacToe);
-        gamePanel.add(btnOthello);
+        gamePanel.add(btnConnectFour);
 
         cp.add(gamePanel, BorderLayout.CENTER);
 
-        // Action listeners for Sudoku button
+        // Action listeners untuk tombol Sudoku
         btnSudoku.addActionListener(e -> {
             JFrame frame = new JFrame("Sudoku");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -47,35 +48,41 @@ public class MainMenu extends JFrame {
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
-            dispose(); // Close main menu
+            dispose(); // Tutup menu utama
         });
 
-        // Action listeners for Tic Tac Toe button
+        // Action listeners untuk tombol Tic Tac Toe
         btnTicTacToe.addActionListener(e -> {
             JFrame frame = new JFrame("Tic Tac Toe");
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setContentPane(new TTTGraphic()); // Menambahkan TicTacToe JPanel ke JFrame
+            frame.setContentPane(new TTTGraphic()); // Ubah ke TTTGraphicPanel, bukan TTTGraphic (yang mungkin JFrame)
             frame.pack();
             frame.setLocationRelativeTo(null);
             frame.setVisible(true);
-            dispose(); // Close main menu
+            dispose(); // Tutup menu utama
         });
 
-        // Action listeners for Othello button (jika Othello ditambahkan nanti)
-        btnOthello.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "Othello belum diimplementasikan!", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+        // Action listeners untuk tombol Connect Four
+        btnConnectFour.addActionListener(e -> {
+            JFrame frame = new JFrame("Connect Four");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setContentPane(new TTTGraphics()); // Pastikan Connect Four menggunakan kelas yang benar
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
+            dispose(); // Tutup menu utama
         });
 
-        // Exit button
+        // Tombol Exit
         JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(e -> System.exit(0)); // Exit application
+        exitButton.addActionListener(e -> System.exit(0)); // Keluar dari aplikasi
         cp.add(exitButton, BorderLayout.SOUTH);
 
-        // Frame settings
+        // Pengaturan Frame
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainMenu::new); // Run the Main Menu
+        SwingUtilities.invokeLater(MainMenu::new); // Menjalankan Main Menu
     }
 }

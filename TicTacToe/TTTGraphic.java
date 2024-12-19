@@ -5,7 +5,7 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /** Tic-Tac-Toe game with AI */
-public class TTTGraphic extends JFrame {
+public class TTTGraphic extends JPanel { // Turunkan TTTGraphic dari JPanel, bukan JFrame
 
     private static final int SIZE = 3; // Board size
     private static final int CELL_SIZE = 100; // Cell size in pixels
@@ -23,10 +23,7 @@ public class TTTGraphic extends JFrame {
     private JButton resetButton;
 
     public TTTGraphic() {
-        setTitle("Tic Tac Toe");
-        setSize(WIDTH, HEIGHT + 100); // Menambahkan ruang yang cukup untuk kontrol
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setPreferredSize(new Dimension(WIDTH, HEIGHT));  // Menetapkan ukuran panel permainan
         setLayout(new BorderLayout()); // Gunakan BorderLayout untuk menempatkan kontrol dan game panel
 
         // Initialize game
@@ -38,9 +35,6 @@ public class TTTGraphic extends JFrame {
         // Initialize AI player
         aiPlayer = new AIPlayerMinimax(board);
         aiPlayer.setSeed(Seed.NOUGHT);
-
-        // Show welcome dialog
-        showWelcomeDialog();
 
         // Setup game panel
         gamePanel = new JPanel() {
@@ -85,34 +79,9 @@ public class TTTGraphic extends JFrame {
         controlPanel.add(new JLabel("Tic Tac Toe"));
         controlPanel.add(resetButton);
 
-        // Add panels to frame
+        // Add panels to this JPanel ( bukan JFrame )
         add(gamePanel, BorderLayout.CENTER);   // Panel permainan di tengah
         add(controlPanel, BorderLayout.NORTH); // Panel kontrol di atas
-    }
-
-    private void showWelcomeDialog() {
-        String[] options = {"Easy", "Medium", "Hard"};
-        int choice = JOptionPane.showOptionDialog(
-                this,
-                "Welcome to Tic Tac Toe!\nChoose your level:",
-                "Welcome",
-                JOptionPane.DEFAULT_OPTION,
-                JOptionPane.INFORMATION_MESSAGE,
-                null,
-                options,
-                options[0]
-        );
-
-        if (choice == JOptionPane.CLOSED_OPTION) {
-            System.exit(0); // Exit if the user closes the dialog
-        } else {
-            int depth = switch (choice) {
-                case 1 -> 2; // Medium
-                case 2 -> 4; // Hard
-                default -> 1; // Easy
-            };
-            aiPlayer.setDepth(depth);
-        }
     }
 
     private void aiMove() {
