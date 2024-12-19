@@ -4,7 +4,6 @@ import TicTacToe.TicTacToe;
 import javax.swing.*;
 import java.awt.*;
 import java.io.Serial;
-//import Othello.OthelloGame;  // Untuk kelas Othello
 
 public class MainMenu extends JFrame {
     @Serial
@@ -42,22 +41,30 @@ public class MainMenu extends JFrame {
 
         // Action listeners for Sudoku button
         btnSudoku.addActionListener(e -> {
-            new Sudoku(); // Open Sudoku game, dialog will appear
+            JFrame frame = new JFrame("Sudoku");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setContentPane(new Sudoku()); // Pastikan Sudoku adalah JPanel
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
             dispose(); // Close main menu
         });
 
         // Action listeners for Tic Tac Toe button
         btnTicTacToe.addActionListener(e -> {
-            new TicTacToe(); // Open TicTacToe GUI
+            JFrame frame = new JFrame("Tic Tac Toe");
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setContentPane(new TicTacToe()); // Menambahkan TicTacToe JPanel ke JFrame
+            frame.pack();
+            frame.setLocationRelativeTo(null);
+            frame.setVisible(true);
             dispose(); // Close main menu
         });
 
-        // Action listeners for Othello button (if needed)
-        /*btnOthello.addActionListener(e -> {
-            OthelloGame othelloGame = new OthelloGame(); // Open Othello game
-            othelloGame.setVisible(true); // Display Othello game window
-            dispose(); // Close main menu
-        });*/
+        // Action listeners for Othello button (jika Othello ditambahkan nanti)
+        btnOthello.addActionListener(e -> {
+            JOptionPane.showMessageDialog(null, "Othello belum diimplementasikan!", "Coming Soon", JOptionPane.INFORMATION_MESSAGE);
+        });
 
         // Exit button
         JButton exitButton = new JButton("Exit");
