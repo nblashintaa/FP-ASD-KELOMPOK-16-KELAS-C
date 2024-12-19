@@ -17,6 +17,12 @@ public class Board {
 
     public Board() {
         this.initGame();
+        cells = new Cell[ROWS][COLS]; // Create the array of cells
+        for (int row = 0; row < ROWS; ++row) {
+            for (int col = 0; col < COLS; ++col) {
+                cells[row][col] = new Cell(row, col); // Initialize each cell
+            }
+        }
     }
 
     public void initGame() {
@@ -37,6 +43,22 @@ public class Board {
             }
         }
 
+    }
+
+
+    public void printBoard() {
+        for (int row = 0; row < ROWS; ++row) {
+            for (int col = 0; col < COLS; ++col) {
+                System.out.print(cells[row][col].content.getDisplayName());
+                if (col < COLS - 1) {
+                    System.out.print("|");
+                }
+            }
+            System.out.println();
+            if (row < ROWS - 1) {
+                System.out.println("-----");
+            }
+        }
     }
 
     public State stepGame(Seed player, int selectedRow, int selectedCol) {

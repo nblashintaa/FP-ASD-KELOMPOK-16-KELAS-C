@@ -29,7 +29,7 @@ public class GameMain {
             // Update cells[][] and currentState
             stepGame();
             // Refresh the display
-            board.paint();
+            board.printBoard();
             // Print message if game over
             if (currentState == State.CROSS_WON) {
                 System.out.println("'X' won!\nBye!");
@@ -60,7 +60,7 @@ public class GameMain {
     public void stepGame() {
         boolean validInput = false;  // for validating input
         do {
-            String icon = currentPlayer.getIcon();
+            String icon = currentPlayer.getDisplayName();
             System.out.print("Player '" + icon + "', enter your move (row[1-3] column[1-3]): ");
             int row = in.nextInt() - 1;   // [0-2]
             int col = in.nextInt() - 1;
