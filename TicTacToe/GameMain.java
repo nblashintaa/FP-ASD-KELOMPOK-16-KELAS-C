@@ -1,5 +1,7 @@
 package TicTacToe;
+
 import java.util.Scanner;
+
 /**
  * The main class for the Tic-Tac-Toe (Console-OO, non-graphics version)
  * It acts as the overall controller of the game.
@@ -11,7 +13,7 @@ public class GameMain {
     /** The current state of the game (of enum State) */
     private State currentState;
     /** The current player (of enum Seed) */
-    private Seed  currentPlayer;
+    private Seed currentPlayer;
 
     private static Scanner in = new Scanner(System.in);
 
@@ -29,41 +31,41 @@ public class GameMain {
             // Update cells[][] and currentState
             stepGame();
             // Refresh the display
-            board.printBoard();
+            paintBoard();
             // Print message if game over
             if (currentState == State.CROSS_WON) {
                 System.out.println("'X' won!\nBye!");
             } else if (currentState == State.NOUGHT_WON) {
                 System.out.println("'O' won!\nBye!");
             } else if (currentState == State.DRAW) {
-                System.out.println("It's Draw!\nBye!");
+                System.out.println("It's a Draw!\nBye!");
             }
             // Switch currentPlayer
             currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
-        } while (currentState == State.PLAYING);  // repeat until game over
+        } while (currentState == State.PLAYING); // repeat until game over
     }
 
     /** Perform one-time initialization tasks */
     public void initGame() {
-        board = new Board();  // allocate game-board
+        board = new Board(); // allocate game-board
     }
 
     /** Reset the game-board contents and the current states, ready for new game */
     public void newGame() {
-        board.newGame();  // clear the board contents
-        currentPlayer = Seed.CROSS;   // CROSS plays first
+        board.newGame(); // clear the board contents
+        currentPlayer = Seed.CROSS; // CROSS plays first
         currentState = State.PLAYING; // ready to play
     }
 
     /** The currentPlayer makes one move.
      Update cells[][] and currentState. */
     public void stepGame() {
-        boolean validInput = false;  // for validating input
+        boolean validInput = false; // for validating input
         do {
             String icon = currentPlayer.getDisplayName();
-            System.out.print("Player '" + icon + "', enter your move (row[1-3] column[1-3]): ");
-            int row = in.nextInt() - 1;   // [0-2]
-            int col = in.nextInt() - 1;
+            System.out.print("Player '" + icon + "', enter your move (row[1-8] column[1-8]): ");
+            int row = in.nextInt() - 1; // [0-7]
+            int col = in.nextInt() - 1; // [0-7]
             if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
                     && board.cells[row][col].content == Seed.NO_SEED) {
                 // Update cells[][] and return the new game state after the move
@@ -73,11 +75,31 @@ public class GameMain {
                 System.out.println("This move at (" + (row + 1) + "," + (col + 1)
                         + ") is not valid. Try again...");
             }
-        } while (!validInput);   // repeat until input is valid
+        } while (!validInput); // repeat until input is valid
+    }
+
+    /** Paint the current board state to the console */
+    public void paintBoard() {
+        System.out.println();
+        for (int row = 0; row < Board.ROWS; ++row) {
+            for (int col = 0; col < Board.COLS; ++col) {
+                System.out.print(board.cells[row][col].content.getDisplayName());
+                if (col < Board.COLS - 1) System.out.print("|");
+            }
+            System.out.println();
+            if (row < Board.ROWS - 1) {
+                for (int col = 0; col < Board.COLS; ++col) {
+                    System.out.print("-");
+                    if (col < Board.COLS - 1) System.out.print("+");
+                }
+                System.out.println();
+            }
+        }
+        System.out.println();
     }
 
     /** The entry main() method */
     public static void main(String[] args) {
-        new GameMain();  // Let the constructor do the job
+        new GameMain(); // Let the constructor do the job
     }
 }

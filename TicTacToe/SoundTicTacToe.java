@@ -2,24 +2,45 @@ package TicTacToe;
 
 import javax.sound.sampled.*;
 import java.io.InputStream;
-import java.io.IOException;
 
 public class SoundTicTacToe {
-    public static void playSound(String soundFile) {
+    private Clip clip;
+
+    // Constructor to load the sound from a file
+    public SoundTicTacToe(String soundFileName) {
         try {
-            // Try loading the resource from the current package
-            InputStream sound = SoundTicTacToe.class.getResourceAsStream("/" + soundFile);
-            if (sound == null) {
-                System.out.println("Sound file not found: " + soundFile);
-                return;
+            // Use getResourceAsStream to load files inside the src folder
+            InputStream audioSrc = getClass().getClassLoader().getResourceAsStream(soundFileName);
+            if (audioSrc == null) {
+                throw new Exception("Sound file not found: " + soundFileName);
             }
-            // Create an AudioInputStream from the InputStream
-            AudioInputStream audioIn = AudioSystem.getAudioInputStream(sound);
-            Clip clip = AudioSystem.getClip();  // Get a clip to play the sound
-            clip.open(audioIn);  // Open the audio input stream
-            clip.start();  // Start playing the sound
-        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(audioSrc);
+            clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+        } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    // Method to start audio looping
+    public void play() {
+        if (clip != null) {
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+        }
+    }
+
+    // Method to play audio once
+    public void playOnce() {
+        if (clip != null) {
+            clip.setFramePosition(0); // Reset the clip to start
+            clip.start(); // Play the sound once
+        }
+    }
+
+    // Method to stop audio
+    public void stop() {
+        if (clip != null) {
+            clip.stop();
         }
     }
 }
