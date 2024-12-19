@@ -1,5 +1,9 @@
-package TicTacToe;
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
 
+package TicTacToe;
 
 import java.awt.Color;
 import java.awt.Graphics;
@@ -17,12 +21,6 @@ public class Board {
 
     public Board() {
         this.initGame();
-        cells = new Cell[ROWS][COLS]; // Create the array of cells
-        for (int row = 0; row < ROWS; ++row) {
-            for (int col = 0; col < COLS; ++col) {
-                cells[row][col] = new Cell(row, col); // Initialize each cell
-            }
-        }
     }
 
     public void initGame() {
@@ -43,22 +41,6 @@ public class Board {
             }
         }
 
-    }
-
-
-    public void printBoard() {
-        for (int row = 0; row < ROWS; ++row) {
-            for (int col = 0; col < COLS; ++col) {
-                System.out.print(cells[row][col].content.getDisplayName());
-                if (col < COLS - 1) {
-                    System.out.print("|");
-                }
-            }
-            System.out.println();
-            if (row < ROWS - 1) {
-                System.out.println("-----");
-            }
-        }
     }
 
     public State stepGame(Seed player, int selectedRow, int selectedCol) {
@@ -93,6 +75,38 @@ public class Board {
         for(row = 0; row < 8; ++row) {
             for(int col = 0; col < 8; ++col) {
                 this.cells[row][col].paint(g);
+            }
+        }
+
+    }
+
+    public void updateGame(Seed mySeed, int rowSelected, int colSelected) {
+        Seed opponentSeed = mySeed == Seed.CROSS ? Seed.NOUGHT : Seed.CROSS;
+        int[][] directions = new int[][]{{0, 1}, {0, -1}, {1, 0}, {-1, 0}, {-1, -1}, {-1, 1}, {1, -1}, {1, 1}};
+        int[][] var8 = directions;
+        int var9 = directions.length;
+
+        label49:
+        for(int var10 = 0; var10 < var9; ++var10) {
+            int[] direction = var8[var10];
+            int row = rowSelected;
+            int col = colSelected;
+
+            do {
+                row += direction[0];
+                col += direction[1];
+                if (row < 0 || row >= 8 || col < 0 || col >= 8) {
+                    continue label49;
+                }
+            } while(this.cells[row][col].content == opponentSeed);
+
+            if (this.cells[row][col].content == mySeed) {
+                int flipRow = rowSelected + direction[0];
+
+                for(int flipCol = colSelected + direction[1]; flipRow != row && flipCol != col; flipCol += direction[1]) {
+                    this.cells[flipRow][flipCol].content = mySeed;
+                    flipRow += direction[0];
+                }
             }
         }
 

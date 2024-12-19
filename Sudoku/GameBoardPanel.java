@@ -132,7 +132,6 @@ public class GameBoardPanel extends JPanel {
             }
         }
         score = 0;
-        hintsUsed = 0; // Reset jumlah hint
         updateScore(0);
     }
 
@@ -144,7 +143,51 @@ public class GameBoardPanel extends JPanel {
                 }
             }
         }
+
+        // Tampilkan dialog ketika game selesai
+        SwingUtilities.invokeLater(() -> showGameCompleteDialog());
         return true;
+    }
+
+    private void showGameCompleteDialog() {
+        String[] options = {"Restart", "New Game", "Main Menu"};
+        int choice = JOptionPane.showOptionDialog(
+                this,
+                "Congratulations! You have completed the puzzle. What would you like to do next?",
+                "Game Completed",
+                JOptionPane.DEFAULT_OPTION,
+                JOptionPane.INFORMATION_MESSAGE,
+                null,
+                options,
+                options[0]
+        );
+
+        switch (choice) {
+            case 0: // Restart
+                resetGame();
+                break;
+            case 1: // New Game
+                String difficulty = JOptionPane.showInputDialog(
+                        this,
+                        "Enter difficulty (easy, medium, hard):",
+                        "New Game Difficulty",
+                        JOptionPane.PLAIN_MESSAGE
+                );
+                if (difficulty != null && !difficulty.isEmpty()) {
+                    newGame(difficulty.toLowerCase());
+                }
+                break;
+            case 2: // Main Menu
+                SwingUtilities.invokeLater(() -> {
+                    JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
+                    topFrame.dispose(); // Tutup jendela permainan saat ini
+                    new Sudoku(); // Buka kembali main menu
+                });
+                break;
+            default:
+                // Tidak ada tindakan
+                break;
+        }
     }
 
     public void applyTheme(boolean isDarkMode) {

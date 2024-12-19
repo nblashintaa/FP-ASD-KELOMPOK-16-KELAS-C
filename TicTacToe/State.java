@@ -1,7 +1,16 @@
+//
+// Source code recreated from a .class file by IntelliJ IDEA
+// (powered by FernFlower decompiler)
+//
+
 package TicTacToe;
-/**
- *  The enum State defines the various game states of the TTT game
- */
-public enum State {  // to save as "State.java"
-    PLAYING, DRAW, CROSS_WON, NOUGHT_WON
+
+public enum State {
+    PLAYING,
+    DRAW,
+    CROSS_WON,
+    NOUGHT_WON;
+
+    private State() {
+    }
 }

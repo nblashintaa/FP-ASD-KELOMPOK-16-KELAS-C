@@ -103,11 +103,11 @@ public class Sudoku extends JFrame {
     }
 
     private void toggleDarkMode() {
-        isDarkMode = !isDarkMode; // Toggle antara true/false
-        applyTheme(getContentPane()); // Terapkan tema ke seluruh container utama
-        board.applyTheme(isDarkMode); // Terapkan tema ke papan permainan
-        darkModeButton.setText(isDarkMode ? "Light Mode" : "Dark Mode"); // Update teks tombol
-        repaint(); // Re-render GUI
+        isDarkMode = !isDarkMode;
+        applyTheme(getContentPane());
+        board.applyTheme(isDarkMode);
+        darkModeButton.setText(isDarkMode ? "Light Mode" : "Dark Mode");
+        repaint();
     }
 
     private void applyTheme(Component component) {
@@ -118,8 +118,7 @@ public class Sudoku extends JFrame {
             background = Color.BLACK;
             foreground = Color.WHITE;
         } else {
-            // Light mode dengan warna ungu pastel
-            background = new Color(238, 196, 255); // Warna ungu pastel
+            background = new Color(238, 196, 255);
             foreground = Color.BLACK;
         }
 
@@ -128,26 +127,9 @@ public class Sudoku extends JFrame {
 
         if (component instanceof Container) {
             for (Component child : ((Container) component).getComponents()) {
-                applyTheme(child);  // Apply theme ke semua komponen dalam container
+                applyTheme(child);
             }
         }
-    }
-
-    private void updateDarkMode() {
-        if (isDarkMode) {
-            getContentPane().setBackground(Color.BLACK);
-            timerLabel.setForeground(Color.WHITE);
-            scoreLabel.setForeground(Color.WHITE);
-            darkModeButton.setText("Light Mode");
-            countdownTimerLabel.setForeground(Color.WHITE);
-        } else {
-            getContentPane().setBackground(Color.WHITE);
-            timerLabel.setForeground(Color.BLACK);
-            scoreLabel.setForeground(Color.BLACK);
-            darkModeButton.setText("Dark Mode");
-            countdownTimerLabel.setForeground(Color.BLACK);
-        }
-        repaint();
     }
 
     private void showWelcomeDialog() {
@@ -181,7 +163,7 @@ public class Sudoku extends JFrame {
         if (choice >= 0) {
             return options[choice].toLowerCase();
         } else {
-            return "easy"; // Default ke easy jika tidak ada pilihan
+            return "easy";
         }
     }
 
