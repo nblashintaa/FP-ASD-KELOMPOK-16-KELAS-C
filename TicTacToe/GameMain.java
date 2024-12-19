@@ -7,32 +7,18 @@ import java.util.Scanner;
  * It acts as the overall controller of the game.
  */
 public class GameMain {
-    // Define properties
-    /** The game board */
-    private Board board;
-    /** The current state of the game (of enum State) */
-    private State currentState;
-    /** The current player (of enum Seed) */
-    private Seed currentPlayer;
+    private Board board;               // Board permainan
+    private State currentState;        // Status permainan saat ini
+    private Seed currentPlayer;        // Pemain yang sedang bermain (X atau O)
 
     private static Scanner in = new Scanner(System.in);
 
-    /** Constructor to setup the game */
     public GameMain() {
-        // Perform one-time initialization tasks
-        initGame();
-
-        // Reset the board, currentStatus and currentPlayer
-        newGame();
-
-        // Play the game once
+        initGame();   // Inisialisasi permainan
+        newGame();    // Mulai permainan baru
         do {
-            // The currentPlayer makes a move.
-            // Update cells[][] and currentState
-            stepGame();
-            // Refresh the display
-            paintBoard();
-            // Print message if game over
+            stepGame();  // Pemain melakukan langkah
+            paintBoard();  // Menampilkan board
             if (currentState == State.CROSS_WON) {
                 System.out.println("'X' won!\nBye!");
             } else if (currentState == State.NOUGHT_WON) {
@@ -40,45 +26,43 @@ public class GameMain {
             } else if (currentState == State.DRAW) {
                 System.out.println("It's a Draw!\nBye!");
             }
-            // Switch currentPlayer
+            // Ganti pemain
             currentPlayer = (currentPlayer == Seed.CROSS) ? Seed.NOUGHT : Seed.CROSS;
-        } while (currentState == State.PLAYING); // repeat until game over
+        } while (currentState == State.PLAYING); // Teruskan permainan jika belum selesai
     }
 
-    /** Perform one-time initialization tasks */
+    // Fungsi untuk inisialisasi game
     public void initGame() {
-        board = new Board(); // allocate game-board
+        board = new Board();   // Membuat board baru
     }
 
-    /** Reset the game-board contents and the current states, ready for new game */
+    // Fungsi untuk memulai permainan baru
     public void newGame() {
-        board.newGame(); // clear the board contents
-        currentPlayer = Seed.CROSS; // CROSS plays first
-        currentState = State.PLAYING; // ready to play
+        board.newGame();  // Setel ulang board
+        currentPlayer = Seed.CROSS;  // Pemain X yang pertama
+        currentState = State.PLAYING;  // Status permainan
     }
 
-    /** The currentPlayer makes one move.
-     Update cells[][] and currentState. */
+    // Fungsi untuk menangani langkah pemain
     public void stepGame() {
-        boolean validInput = false; // for validating input
+        boolean validInput = false;  // Validasi input pemain
         do {
             String icon = currentPlayer.getDisplayName();
-            System.out.print("Player '" + icon + "', enter your move (row[1-8] column[1-8]): ");
-            int row = in.nextInt() - 1; // [0-7]
-            int col = in.nextInt() - 1; // [0-7]
-            if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS
-                    && board.cells[row][col].content == Seed.NO_SEED) {
-                // Update cells[][] and return the new game state after the move
+            System.out.print("Player '" + icon + "', enter your move (row[1-3] column[1-3]): ");
+            int row = in.nextInt() - 1;  // Input baris (diubah ke 0-based)
+            int col = in.nextInt() - 1;  // Input kolom (diubah ke 0-based)
+
+            // Validasi langkah
+            if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS && board.cells[row][col].content == Seed.NO_SEED) {
                 currentState = board.stepGame(currentPlayer, row, col);
-                validInput = true; // input okay, exit loop
+                validInput = true;  // Input valid
             } else {
-                System.out.println("This move at (" + (row + 1) + "," + (col + 1)
-                        + ") is not valid. Try again...");
+                System.out.println("This move at (" + (row + 1) + "," + (col + 1) + ") is not valid. Try again...");
             }
-        } while (!validInput); // repeat until input is valid
+        } while (!validInput);  // Ulangi hingga input valid
     }
 
-    /** Paint the current board state to the console */
+    // Fungsi untuk menampilkan board ke konsol
     public void paintBoard() {
         System.out.println();
         for (int row = 0; row < Board.ROWS; ++row) {
@@ -98,8 +82,7 @@ public class GameMain {
         System.out.println();
     }
 
-    /** The entry main() method */
     public static void main(String[] args) {
-        new GameMain(); // Let the constructor do the job
+        new GameMain();  // Menjalankan permainan
     }
 }

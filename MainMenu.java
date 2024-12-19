@@ -1,5 +1,5 @@
 import Sudoku.Sudoku;
-import TicTacToe.GameMain;
+import TicTacToe.TicTacToe;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,7 +16,7 @@ public class MainMenu extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        // Container untuk layout
+        // Container for layout
         Container cp = getContentPane();
         cp.setLayout(new BorderLayout());
 
@@ -25,11 +25,11 @@ public class MainMenu extends JFrame {
         titleLabel.setFont(new Font("Calibre", Font.BOLD, 18));
         cp.add(titleLabel, BorderLayout.NORTH);
 
-        // Panel dengan tombol untuk setiap game
+        // Panel with buttons for each game
         JPanel gamePanel = new JPanel();
-        gamePanel.setLayout(new GridLayout(3, 1, 10, 10)); // Grid 3x1 untuk game
+        gamePanel.setLayout(new GridLayout(3, 1, 10, 10)); // 3x1 grid for games
 
-        // Tombol untuk setiap game
+        // Buttons for each game
         JButton btnSudoku = new JButton("Sudoku");
         JButton btnTicTacToe = new JButton("Tic Tac Toe");
         JButton btnOthello = new JButton("Othello");
@@ -40,28 +40,28 @@ public class MainMenu extends JFrame {
 
         cp.add(gamePanel, BorderLayout.CENTER);
 
-        // Action listeners untuk tombol Sudoku
+        // Action listeners for Sudoku button
         btnSudoku.addActionListener(e -> {
-            new Sudoku(); // Membuka game Sudoku, dialog akan otomatis muncul
-            dispose(); // Menutup menu utama
+            new Sudoku(); // Open Sudoku game, dialog will appear
+            dispose(); // Close main menu
         });
 
-        // Action listeners untuk tombol Tic Tac Toe
+        // Action listeners for Tic Tac Toe button
         btnTicTacToe.addActionListener(e -> {
-            new GameMain();
-            dispose(); // Menutup menu utama
+            new TicTacToe(); // Open TicTacToe GUI
+            dispose(); // Close main menu
         });
 
-        // Action listeners untuk tombol Othello
+        // Action listeners for Othello button (if needed)
         /*btnOthello.addActionListener(e -> {
-            OthelloGame othelloGame = new OthelloGame(); // Membuka game Othello
-            othelloGame.setVisible(true); // Menampilkan jendela game Othello
-            dispose(); // Menutup menu utama
+            OthelloGame othelloGame = new OthelloGame(); // Open Othello game
+            othelloGame.setVisible(true); // Display Othello game window
+            dispose(); // Close main menu
         });*/
 
-        // Tombol Exit
+        // Exit button
         JButton exitButton = new JButton("Exit");
-        exitButton.addActionListener(e -> System.exit(0)); // Keluar dari aplikasi
+        exitButton.addActionListener(e -> System.exit(0)); // Exit application
         cp.add(exitButton, BorderLayout.SOUTH);
 
         // Frame settings
@@ -69,6 +69,6 @@ public class MainMenu extends JFrame {
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(MainMenu::new); // Menjalankan Main Menu
+        SwingUtilities.invokeLater(MainMenu::new); // Run the Main Menu
     }
 }
