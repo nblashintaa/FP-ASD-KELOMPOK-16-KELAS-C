@@ -7,7 +7,7 @@ import java.util.Scanner;
  * It acts as the overall controller of the game.
  */
 public class GameMain {
-    private Board board;               // Board permainan
+    private BoardTTT board;               // Board permainan
     private State currentState;        // Status permainan saat ini
     private Seed currentPlayer;        // Pemain yang sedang bermain (X atau O)
 
@@ -33,7 +33,7 @@ public class GameMain {
 
     // Fungsi untuk inisialisasi game
     public void initGame() {
-        board = new Board();   // Membuat board baru
+        board = new BoardTTT();   // Membuat board baru
     }
 
     // Fungsi untuk memulai permainan baru
@@ -53,7 +53,7 @@ public class GameMain {
             int col = in.nextInt() - 1;  // Input kolom (diubah ke 0-based)
 
             // Validasi langkah
-            if (row >= 0 && row < Board.ROWS && col >= 0 && col < Board.COLS && board.cells[row][col].content == Seed.NO_SEED) {
+            if (row >= 0 && row < BoardTTT.ROWS && col >= 0 && col < BoardTTT.COLS && board.cells[row][col].content == Seed.NO_SEED) {
                 currentState = board.stepGame(currentPlayer, row, col);
                 validInput = true;  // Input valid
             } else {
@@ -65,16 +65,16 @@ public class GameMain {
     // Fungsi untuk menampilkan board ke konsol
     public void paintBoard() {
         System.out.println();
-        for (int row = 0; row < Board.ROWS; ++row) {
-            for (int col = 0; col < Board.COLS; ++col) {
+        for (int row = 0; row < BoardTTT.ROWS; ++row) {
+            for (int col = 0; col < BoardTTT.COLS; ++col) {
                 System.out.print(board.cells[row][col].content.getDisplayName());
-                if (col < Board.COLS - 1) System.out.print("|");
+                if (col < BoardTTT.COLS - 1) System.out.print("|");
             }
             System.out.println();
-            if (row < Board.ROWS - 1) {
-                for (int col = 0; col < Board.COLS; ++col) {
+            if (row < BoardTTT.ROWS - 1) {
+                for (int col = 0; col < BoardTTT.COLS; ++col) {
                     System.out.print("-");
-                    if (col < Board.COLS - 1) System.out.print("+");
+                    if (col < BoardTTT.COLS - 1) System.out.print("+");
                 }
                 System.out.println();
             }

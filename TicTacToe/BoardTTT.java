@@ -6,16 +6,16 @@ import java.awt.Graphics;
 /**
  * Represents the Tic Tac Toe board and handles the game state.
  */
-public class Board {
+public class BoardTTT {
     public static final int ROWS = 3;  // Size of the board (3x3)
     public static final int COLS = 3;  // Size of the board (3x3)
-    public Cell[][] cells;            // 2D array to hold the cells
+    public CellTTT[][] cells;            // 2D array to hold the cells
 
-    public Board() {
-        cells = new Cell[ROWS][COLS];  // Initialize 3x3 board
+    public BoardTTT() {
+        cells = new CellTTT[ROWS][COLS];  // Initialize 3x3 board
         for (int row = 0; row < ROWS; ++row) {
             for (int col = 0; col < COLS; ++col) {
-                cells[row][col] = new Cell();
+                cells[row][col] = new CellTTT();
             }
         }
     }
