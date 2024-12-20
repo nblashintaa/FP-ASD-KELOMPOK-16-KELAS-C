@@ -22,6 +22,9 @@ public class TTTGraphics extends JFrame {
     private State currentState; // Current game state
     private String difficultyLevel; // Difficulty level selected by the user
 
+    private JButton restartButton; // Restart button
+    private JButton mainMenuButton; // Back to main menu button
+
     public TTTGraphics() {
         // Show a welcome pop-up and select difficulty level
         JOptionPane.showMessageDialog(null, "Welcome to Connect Four Game!\nChoose your difficulty level:");
@@ -37,7 +40,7 @@ public class TTTGraphics extends JFrame {
             @Override
             protected void paintComponent(Graphics g) {
                 super.paintComponent(g);
-                setBackground(Color.WHITE);
+                setBackground(Color.BLACK);
 
                 g.setColor(Color.LIGHT_GRAY);
                 for (int row = 1; row < ROWS; row++) {
@@ -84,12 +87,33 @@ public class TTTGraphics extends JFrame {
                         }
                     }
                     repaint();
-                } else {
-                    resetGame();
-                    repaint();
                 }
             }
         });
+
+        // Restart Button
+        restartButton = new JButton("Restart Game");
+        restartButton.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 14));
+        restartButton.addActionListener(e -> {
+            resetGame();
+            repaint();
+        });
+
+        // Main Menu Button
+        mainMenuButton = new JButton("Back to Main Menu");
+        mainMenuButton.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 14));
+        mainMenuButton.addActionListener(e -> {
+            int choice = JOptionPane.showConfirmDialog(null, "Are you sure you want to go back to the main menu?",
+                    "Back to Main Menu", JOptionPane.YES_NO_OPTION);
+            if (choice == JOptionPane.YES_OPTION) {
+                showMainMenu();
+            }
+        });
+
+        // Panel for buttons
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(restartButton);
+        buttonPanel.add(mainMenuButton);
 
         statusBar = new JLabel(" ");
         statusBar.setFont(new Font(Font.DIALOG_INPUT, Font.BOLD, 14));
@@ -97,13 +121,30 @@ public class TTTGraphics extends JFrame {
 
         setLayout(new BorderLayout());
         add(gamePanel, BorderLayout.CENTER);
+        add(buttonPanel, BorderLayout.NORTH); // Ensure the button panel is added to NORTH
         add(statusBar, BorderLayout.PAGE_END);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        pack();
+        pack(); // Ensure layout is packed after adding components
         setTitle("Connect Four");
         setVisible(true);
 
         resetGame();
+    }
+
+    private void showMainMenu() {
+        // Close the current game window
+        dispose();
+
+        // Show the main menu dialog again
+        JOptionPane.showMessageDialog(null, "Welcome to Connect Four Game!\nChoose your difficulty level:");
+
+        String[] difficultyLevels = {"Easy", "Medium", "Hard"};
+        difficultyLevel = (String) JOptionPane.showInputDialog(null, "Select Difficulty",
+                "Difficulty Level", JOptionPane.QUESTION_MESSAGE, null, difficultyLevels, difficultyLevels[1]);
+
+        // Start a new game with the selected difficulty
+        game = new ConnectFour("Player 1", "AI (" + difficultyLevel + ")");
+        new TTTGraphics(); // Create a new instance of the game with the new difficulty level
     }
 
     private void resetGame() {

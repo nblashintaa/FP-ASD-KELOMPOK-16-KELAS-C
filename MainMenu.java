@@ -14,7 +14,7 @@ public class MainMenu extends JFrame {
         setTitle("Main Menu");
         setSize(400, 300);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setLocationRelativeTo(null);
+        setLocationRelativeTo(null); // Menempatkan window di tengah
 
         // Container untuk layout
         Container cp = getContentPane();
@@ -32,8 +32,9 @@ public class MainMenu extends JFrame {
         // Tombol untuk setiap game
         JButton btnSudoku = new JButton("Sudoku");
         JButton btnTicTacToe = new JButton("Tic Tac Toe");
-        JButton btnConnectFour = new JButton("Connect Four"); // Mengganti Othello dengan Connect Four
+        JButton btnConnectFour = new JButton("Connect Four");
 
+        // Menambahkan tombol ke panel
         gamePanel.add(btnSudoku);
         gamePanel.add(btnTicTacToe);
         gamePanel.add(btnConnectFour);
